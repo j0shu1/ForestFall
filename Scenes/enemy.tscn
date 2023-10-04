@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://cfbt7h7h2xf20"]
+
+[ext_resource type="Texture2D" uid="uid://b0h5revrk6dok" path="res://icon.svg" id="1_6geut"]
+[ext_resource type="Script" path="res://Scripts/Enemy.cs" id="1_clrx7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qqc4f"]
+size = Vector2(128, 128)
+
+[node name="Enemy" type="CharacterBody2D" groups=["Enemy"]]
+motion_mode = 1
+wall_min_slide_angle = 0.0
+script = ExtResource("1_clrx7")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.733333, 0.223529, 0.00392157, 1)
+texture = ExtResource("1_6geut")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_qqc4f")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+target_desired_distance = 200.0
+avoidance_enabled = true
+radius = 100.0
+debug_enabled = true

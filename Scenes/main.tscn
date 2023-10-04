@@ -1,0 +1,49 @@
+[gd_scene load_steps=9 format=3 uid="uid://d3dvsomlvyar3"]
+
+[ext_resource type="PackedScene" uid="uid://c8gm5kq00c54m" path="res://Scenes/player.tscn" id="1_0ge4o"]
+[ext_resource type="Script" path="res://Scripts/Main.cs" id="1_t4uv8"]
+[ext_resource type="Texture2D" uid="uid://d2cf6lfms50v2" path="res://Assets/tile map placeholder.png" id="2_0x6bo"]
+[ext_resource type="Script" path="res://Scripts/Camera.cs" id="3_gsyf7"]
+[ext_resource type="PackedScene" uid="uid://cfbt7h7h2xf20" path="res://Scenes/enemy.tscn" id="4_k72fy"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_jxjel"]
+vertices = PackedVector2Array(-64, -64, 64, -64, 64, 64, -64, 64)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-64, -64, 64, -64, 64, 64, -64, 64)])
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4l5rn"]
+texture = ExtResource("2_0x6bo")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+0:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_jxjel")
+1:0/0 = 0
+1:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+1:0/0/physics_layer_0/angular_velocity = 0.0
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-64, -64, 64, -64, 64, 64, -64, 64)
+
+[sub_resource type="TileSet" id="TileSet_gs4ch"]
+tile_size = Vector2i(128, 128)
+physics_layer_0/collision_layer = 1
+navigation_layer_0/layers = 1
+sources/1 = SubResource("TileSetAtlasSource_4l5rn")
+
+[node name="Main" type="Node"]
+script = ExtResource("1_t4uv8")
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_gs4ch")
+format = 2
+layer_0/tile_data = PackedInt32Array(262144, 65537, 0, 262145, 65537, 0, 262146, 65537, 0, 262147, 65537, 0, 262148, 65537, 0, 262149, 65537, 0, 262150, 65537, 0, 262151, 65537, 0, 262152, 65537, 0, 262153, 65537, 0, 262154, 65537, 0, 196618, 65537, 0, 131082, 65537, 0, 65546, 65537, 0, 10, 65537, 0, -65526, 65537, 0, -65527, 65537, 0, -65528, 65537, 0, -65529, 65537, 0, -65530, 65537, 0, -65531, 65537, 0, -65532, 65537, 0, -65533, 65537, 0, -65534, 65537, 0, -65535, 65537, 0, -65536, 65537, 0, -1, 65537, 0, 65535, 65537, 0, 131071, 65537, 0, 196607, 65537, 0, 262143, 65537, 0, 327679, 65537, 0, 65536, 1, 0, 65537, 1, 0, 65538, 1, 0, 65539, 1, 0, 131072, 65537, 0, 131073, 65537, 0, 131074, 65537, 0, 131075, 1, 0, 131076, 1, 0, 131077, 1, 0, 131078, 1, 0, 131079, 1, 0, 131080, 1, 0, 131081, 1, 0, 196617, 1, 0, 196616, 1, 0, 196615, 1, 0, 196614, 1, 0, 196613, 1, 0, 196612, 1, 0, 196611, 1, 0, 196610, 1, 0, 196609, 1, 0, 196608, 1, 0, 0, 1, 0, 1, 1, 0, 2, 1, 0, 3, 1, 0, 4, 1, 0, 5, 1, 0, 6, 1, 0, 7, 1, 0, 8, 1, 0, 9, 1, 0, 65545, 1, 0, 65544, 1, 0, 65543, 1, 0, 65542, 1, 0, 65541, 1, 0, 65540, 1, 0)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(550, 250)
+position_smoothing_enabled = true
+script = ExtResource("3_gsyf7")
+
+[node name="Enemy" parent="." instance=ExtResource("4_k72fy")]
+position = Vector2(191, 70)
+
+[node name="Player" parent="." instance=ExtResource("1_0ge4o")]
+position = Vector2(547, 401)
