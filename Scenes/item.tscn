@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://bj1ftgbyrty6n"]
+
+[ext_resource type="Texture2D" uid="uid://b0h5revrk6dok" path="res://icon.svg" id="1_y5fmk"]
+[ext_resource type="Script" path="res://Scripts/Item.cs" id="2_wtlj0"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tlx78"]
+radius = 22.8364
+height = 45.6727
+
+[node name="Item" type="Sprite2D"]
+texture = ExtResource("1_y5fmk")
+script = ExtResource("2_wtlj0")
+
+[node name="CollectionArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollectionArea"]
+shape = SubResource("CapsuleShape2D_tlx78")
+disabled = true
+
+[connection signal="body_entered" from="CollectionArea" to="." method="OnCollectionAreaBodyEntered"]

@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://c8gm5kq00c54m"]
+[gd_scene load_steps=5 format=3 uid="uid://c8gm5kq00c54m"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_1mqdr"]
 [ext_resource type="Texture2D" uid="uid://b0h5revrk6dok" path="res://icon.svg" id="1_46gav"]
-[ext_resource type="PackedScene" uid="uid://c7sp61jc7krf" path="res://Scenes/bullet.tscn" id="2_44af1"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_p6hux"]
 animations = [{
@@ -15,24 +14,19 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ejihl"]
-radius = 12.6
-height = 25.6
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xp05h"]
+size = Vector2(15.2, 15.2)
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["Player"]]
 script = ExtResource("1_1mqdr")
-BulletScene = ExtResource("2_44af1")
 metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-scale = Vector2(1, 1.00768)
+texture_filter = 1
+scale = Vector2(0.6, 0.6)
 sprite_frames = SubResource("SpriteFrames_p6hux")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1.43051e-06, 1.66893e-06)
 scale = Vector2(5, 5)
-shape = SubResource("CapsuleShape2D_ejihl")
-
-[node name="MouseRotation" type="Node2D" parent="."]
-
-[node name="Marker2D" type="Marker2D" parent="MouseRotation"]
-position = Vector2(100, 0)
+shape = SubResource("RectangleShape2D_xp05h")

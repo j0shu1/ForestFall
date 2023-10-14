@@ -3,11 +3,10 @@
 [ext_resource type="Texture2D" uid="uid://b0h5revrk6dok" path="res://icon.svg" id="1_6geut"]
 [ext_resource type="Script" path="res://Scripts/Enemy.cs" id="1_clrx7"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_qqc4f"]
-size = Vector2(128, 128)
+[sub_resource type="CircleShape2D" id="CircleShape2D_2r4lc"]
+radius = 64.2806
 
 [node name="Enemy" type="CharacterBody2D" groups=["Enemy"]]
-motion_mode = 1
 wall_min_slide_angle = 0.0
 script = ExtResource("1_clrx7")
 metadata/_edit_group_ = true
@@ -17,10 +16,16 @@ modulate = Color(0.733333, 0.223529, 0.00392157, 1)
 texture = ExtResource("1_6geut")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_qqc4f")
+shape = SubResource("CircleShape2D_2r4lc")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 target_desired_distance = 200.0
+path_postprocessing = 1
 avoidance_enabled = true
 radius = 100.0
-debug_enabled = true
+
+[node name="GetNextPath" type="Timer" parent="."]
+wait_time = 0.2
+autostart = true
+
+[connection signal="timeout" from="GetNextPath" to="." method="OnGetNextPathTimeout"]

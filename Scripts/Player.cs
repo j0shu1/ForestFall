@@ -1,74 +1,87 @@
 using Godot;
+using Godot.Collections;
 
 public partial class Player : CharacterBody2D
 {
-	[Export]
-	public PackedScene BulletScene;
+	public MovementComponent MovementComponent;
+    public bool facingRight = true;
 
-	public const float Speed = 300.0f;
-	public const float JumpVelocity = -400.0f;
+    private StringName _attack = new("Attack");
+	private bool _controllerConnected;
+	private Node2D _weapon;
+    private Variant[] _args;
+    private Dictionary<string, int> _items = new();
+    
+    public override void _Ready()
+    {
+        _args = new Variant[] { this };
+		_weapon = GetNode<Node2D>("Weapon");
+        _controllerConnected = Input.GetConnectedJoypads().Count > 0;
+    }
 
-	// Get the gravity from the project settings to be synced with RigidBody nodes.
-	public float gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
+    public override void _Process(double delta)
+    {
+        if (_controllerConnected)
+        {
+            AimWeaponWithController();
+        }
+
+        HandleWeaponSpriteDirection();
+    }
 
     public override void _PhysicsProcess(double delta)
 	{
-		Vector2 velocity = Velocity;
-		bool isOnFloor = IsOnFloor();
+		MovementComponent.Move(this, delta);
 
-		// Add the gravity.
-		if (!isOnFloor)
-			velocity.Y += gravity * (float)delta;
+        // Attack, if applicable.
+        if (Input.IsActionPressed("attack"))
+            _weapon.Call(_attack, _args);
 
-		// Handle Jump.
-		if ( isOnFloor &&
-			(Input.IsActionJustPressed("ui_accept")
-			|| Input.IsActionJustPressed("move_up")
-			|| Input.IsActionJustPressed("ui_up")))
-		{
-			velocity.Y = JumpVelocity;
-		}
-
-		// Get the input direction and handle the movement/deceleration.
-		// As good practice, you should replace UI actions with custom gameplay actions.
-		Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
-		direction += Input.GetVector("move_left", "move_right", "move_up", "move_down");
-		direction = direction.Normalized();
-		if (direction != Vector2.Zero)
-		{
-			velocity.X = direction.X * Speed;
-		}
-		else
-		{
-			velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
-		}
-
-		Velocity = velocity;
-		MoveAndSlide();
+        MoveAndSlide();
 	}
 
     public override void _UnhandledInput(InputEvent @event)
     {
-		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
-		{
-			if (mouseEvent.ButtonIndex == MouseButton.Left)
-			{
-				Shoot();
-			}
-		}
+        if (@event is InputEventMouseMotion)
+        {
+            _weapon.LookAt(GetGlobalMousePosition());
+        }
     }
 
-    private void Shoot()
+    public void AddItem(string itemName)
+    {
+        if (_items.ContainsKey(itemName))
+            _items[itemName]++;
+        else
+            _items.Add(itemName, 1);
+
+        GD.Print($"Player now has {_items[itemName]} {itemName}");
+    }
+
+    public int ItemCount(string request)
+    {
+        return _items.ContainsKey(request) ? _items[request] : 0;
+    }
+
+	private void AimWeaponWithController()
 	{
-		Node2D mouseRotation = GetNode<Node2D>("MouseRotation");
-		mouseRotation.LookAt(GetGlobalMousePosition());
+        // Look at the direction the right stick is moved.
+        var rightStick = new Vector2(Input.GetJoyAxis(0, JoyAxis.RightX), Input.GetJoyAxis(0, JoyAxis.RightY));
+        if (rightStick.Abs().X > 0.05 || rightStick.Abs().Y > 0.05)
+        {
+            _weapon.LookAt(_weapon.GlobalPosition + rightStick);
+        }
+        else
+        {
+            _weapon.RotationDegrees = facingRight ? 0 : 180;
+        }
 
-		Marker2D marker = mouseRotation.GetNode<Marker2D>("Marker2D");
+        HandleWeaponSpriteDirection();
+    }
 
-		Bullet bullet = BulletScene.Instantiate<Bullet>();
-		bullet.Position = marker.GlobalPosition;
-		bullet.Velocity = GetGlobalMousePosition() - bullet.Position;
-
-        GetParent().AddChild(bullet);
-	}
+    private void HandleWeaponSpriteDirection()
+    {
+        _weapon.RotationDegrees %= 360;
+        _weapon.GetNode<Sprite2D>("Sprite2D").FlipV = _weapon.RotationDegrees < -90 || _weapon.RotationDegrees > 90;
+    }
 }

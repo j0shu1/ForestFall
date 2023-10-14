@@ -5,11 +5,17 @@ public partial class Main : Node
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-	}
+		// Spawn the player.
+		Player player = PlayerFactory.CreatePlayer(
+			PlayerFactory.EntityType.Shotgunner,
+			GetNode<Marker2D>("PlayerSpawnLocation").GlobalPosition);
+		AddChild(player);
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
+		// Spawn the enemy.
+		Enemy enemy = EnemyFactory.CreateEnemy(
+			EnemyFactory.EnemyType.Minion,
+			GetNode<Marker2D>("EnemySpawnLocation").GlobalPosition);
+		AddChild(enemy);
 	}
 
     public override void _UnhandledKeyInput(InputEvent @event)
@@ -18,8 +24,4 @@ public partial class Main : Node
 			if (inputEventKey.IsActionPressed("ui_cancel"))
 				GetTree().Quit();
     }
-	public int Test()
-	{
-		return 1;
-	}
 }
