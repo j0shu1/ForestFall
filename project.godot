@@ -18,13 +18,17 @@ config/icon="res://icon.svg"
 
 [display]
 
-window/size/mode=3
 window/size/resizable=false
 window/stretch/mode="canvas_items"
+window/layer_3="TileMap"
 
 [dotnet]
 
 project/assembly_name="Prototype"
+
+[filesystem]
+
+import/blender/enabled=false
 
 [input]
 
@@ -62,6 +66,11 @@ interact={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_3="TileMap"
+
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/canvas_textures/default_texture_filter=1

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://cothk4kk28nkx"]
+
+[ext_resource type="Script" path="res://Scripts/HealthComponent.cs" id="1_n4lu3"]
+[ext_resource type="PackedScene" uid="uid://dgqqspyqq8n5i" path="res://Scenes/damage_particle.tscn" id="2_nx3o3"]
+
+[node name="HealthComponent" type="Node" node_paths=PackedStringArray("_regenTimer")]
+script = ExtResource("1_n4lu3")
+_regenTimer = NodePath("RegenTimer")
+_damageParticleScene = ExtResource("2_nx3o3")
+
+[node name="RegenTimer" type="Timer" parent="."]
+wait_time = 2.0
+
+[node name="TookDamageRecently" type="Timer" parent="."]
+
+[connection signal="timeout" from="RegenTimer" to="." method="OnRegenTimerTimeout"]

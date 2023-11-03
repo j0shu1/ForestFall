@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://cjtyvrn2ay773"]
+
+[ext_resource type="Script" path="res://Player/Weapons/Handgun.cs" id="1_d2wdo"]
+[ext_resource type="Texture2D" uid="uid://dronffryeqw1h" path="res://Assets/placeholder weapon.png" id="2_btbg7"]
+
+[node name="Handgun" type="Node2D"]
+script = ExtResource("1_d2wdo")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(75, 0)
+texture = ExtResource("2_btbg7")
+flip_h = true
+
+[node name="BulletSpawnLocation" type="Marker2D" parent="Sprite2D"]
+position = Vector2(24.82, -7.065)

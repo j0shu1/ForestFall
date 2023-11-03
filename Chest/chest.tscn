@@ -1,0 +1,43 @@
+[gd_scene load_steps=5 format=3 uid="uid://c5ige8qkltxjx"]
+
+[ext_resource type="Script" path="res://Chest/Chest.cs" id="1_0rtnd"]
+[ext_resource type="Texture2D" uid="uid://b0h5revrk6dok" path="res://icon.svg" id="1_qa7r7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0fejs"]
+size = Vector2(127, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fvtgx"]
+size = Vector2(281, 126)
+
+[node name="Chest" type="StaticBody2D" groups=["Chest"]]
+collision_layer = 6
+script = ExtResource("1_0rtnd")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_0fejs")
+one_way_collision = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(1, 0.5)
+texture = ExtResource("1_qa7r7")
+
+[node name="InteractionArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea"]
+position = Vector2(0, -31)
+shape = SubResource("RectangleShape2D_fvtgx")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+visible = false
+offset_left = -63.0
+offset_top = 37.0
+offset_right = 64.0
+offset_bottom = 58.0
+
+[node name="Label" type="Label" parent="PanelContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+
+[connection signal="body_entered" from="InteractionArea" to="." method="OnInteractionAreaBodyEntered"]
+[connection signal="body_exited" from="InteractionArea" to="." method="OnInteractionAreaBodyExited"]

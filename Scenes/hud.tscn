@@ -1,0 +1,92 @@
+[gd_scene load_steps=7 format=3 uid="uid://5c3ymepd7hj4"]
+
+[ext_resource type="Script" path="res://Scripts/Hud.cs" id="1_trum7"]
+[ext_resource type="Texture2D" uid="uid://b0h5revrk6dok" path="res://icon.svg" id="2_hyol3"]
+[ext_resource type="Texture2D" uid="uid://t0jwsv2gpc5g" path="res://Assets/health_empty.png" id="2_r43me"]
+[ext_resource type="Texture2D" uid="uid://c26g381f11t0b" path="res://Assets/health_full.png" id="3_62h5m"]
+[ext_resource type="Texture2D" uid="uid://dyqnmwklhnfpx" path="res://Assets/bullet_shell_spent.png" id="4_ou0oj"]
+[ext_resource type="Texture2D" uid="uid://dgt2rjih04fqg" path="res://Assets/bullet_shell.png" id="5_7c76i"]
+
+[node name="HUD" type="CanvasLayer" node_paths=PackedStringArray("_healthBar", "_magazineBackground", "_magazineForeground", "_itemPanelContainer", "_displayTimer", "_itemImage", "_itemNameLabel", "_itemDescriptionLabel")]
+script = ExtResource("1_trum7")
+_healthBar = NodePath("HealthBar")
+_magazineBackground = NodePath("Magazine/MagazineBackground")
+_magazineForeground = NodePath("Magazine/MagazineForeground")
+_itemPanelContainer = NodePath("ItemPanelContainer")
+_displayTimer = NodePath("DisplayTimer")
+_itemImage = NodePath("ItemPanelContainer/MarginContainer/HBoxContainer/ItemImage")
+_itemNameLabel = NodePath("ItemPanelContainer/MarginContainer/HBoxContainer/VBoxContainer/ItemName")
+_itemDescriptionLabel = NodePath("ItemPanelContainer/MarginContainer/HBoxContainer/VBoxContainer/ItemDescription")
+
+[node name="HealthBar" type="TextureProgressBar" parent="."]
+offset_left = 116.0
+offset_top = 544.0
+offset_right = 216.0
+offset_bottom = 594.0
+max_value = 10.0
+rounded = true
+texture_under = ExtResource("2_r43me")
+texture_progress = ExtResource("3_62h5m")
+tint_under = Color(0.168627, 0.168627, 0.168627, 1)
+tint_progress = Color(0, 0.588235, 0, 1)
+
+[node name="Magazine" type="Node2D" parent="."]
+position = Vector2(116, 593)
+scale = Vector2(2, 2)
+metadata/_edit_group_ = true
+
+[node name="MagazineBackground" type="Sprite2D" parent="Magazine"]
+texture_repeat = 2
+texture = ExtResource("4_ou0oj")
+centered = false
+region_enabled = true
+
+[node name="MagazineForeground" type="Sprite2D" parent="Magazine"]
+texture_repeat = 2
+texture = ExtResource("5_7c76i")
+centered = false
+region_enabled = true
+
+[node name="ItemPanelContainer" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -325.0
+offset_top = 20.0
+offset_right = 325.0
+offset_bottom = 100.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ItemPanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ItemPanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="ItemImage" type="TextureRect" parent="ItemPanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_hyol3")
+stretch_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ItemPanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ItemName" type="Label" parent="ItemPanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Name here"
+
+[node name="ItemDescription" type="Label" parent="ItemPanelContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "This is a description where many words describe how it works."
+
+[node name="DisplayTimer" type="Timer" parent="."]
+wait_time = 4.0
+
+[connection signal="timeout" from="DisplayTimer" to="." method="OnDisplayTimerTimeout"]

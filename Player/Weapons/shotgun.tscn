@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://xasnob8j1x03"]
+
+[ext_resource type="Script" path="res://Player/Weapons/Shotgun.cs" id="1_f0uhy"]
+[ext_resource type="Texture2D" uid="uid://c1g3s5kwexmwu" path="res://Assets/shotgun.png" id="2_sqdht"]
+
+[sub_resource type="Curve" id="Curve_garh1"]
+_data = [Vector2(0.0117647, 1), 0.0, 0.0, 0, 0, Vector2(0.584314, 0.894737), 0.0, 0.0, 0, 0, Vector2(1, 0.0315789), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_orl7l"]
+offsets = PackedFloat32Array(0, 0.446429)
+colors = PackedColorArray(1, 0.227451, 0, 1, 0, 0, 0, 1)
+
+[node name="Shotgun" type="Node2D" node_paths=PackedStringArray("_shotBurst")]
+script = ExtResource("1_f0uhy")
+_shotBurst = NodePath("Sprite2D/ShotBurst")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(68, -1)
+texture = ExtResource("2_sqdht")
+flip_h = true
+
+[node name="ShotBurst" type="CPUParticles2D" parent="Sprite2D"]
+position = Vector2(49, -7)
+emitting = false
+amount = 20
+lifetime = 0.25
+one_shot = true
+explosiveness = 1.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 250.0
+initial_velocity_max = 600.0
+scale_amount_min = 10.0
+scale_amount_max = 30.0
+scale_amount_curve = SubResource("Curve_garh1")
+color_ramp = SubResource("Gradient_orl7l")
+
+[node name="BulletSpawnLocation" type="Marker2D" parent="Sprite2D"]
+position = Vector2(49, -7)

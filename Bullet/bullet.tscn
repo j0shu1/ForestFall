@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://c7sp61jc7krf"]
+
+[ext_resource type="Script" path="res://Bullet/Bullet.cs" id="1_dele0"]
+[ext_resource type="Texture2D" uid="uid://ca5qac51p7ssa" path="res://Assets/bullet.png" id="2_th8sm"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_no8nv"]
+
+[node name="Bullet" type="CharacterBody2D"]
+collision_layer = 2
+slide_on_ceiling = false
+script = ExtResource("1_dele0")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_no8nv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(2.38419e-07, -2.38419e-07)
+texture = ExtResource("2_th8sm")
+
+[node name="DeleteTimer" type="Timer" parent="."]
+autostart = true
+
+[connection signal="timeout" from="DeleteTimer" to="." method="OnDeleteTimerTimeout"]

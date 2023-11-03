@@ -1,0 +1,44 @@
+[gd_scene load_steps=5 format=3 uid="uid://bj1ftgbyrty6n"]
+
+[ext_resource type="Texture2D" uid="uid://b0h5revrk6dok" path="res://icon.svg" id="1_y5fmk"]
+[ext_resource type="Script" path="res://Chest/Item.cs" id="2_wtlj0"]
+[ext_resource type="Texture2D" uid="uid://b2udp5c183uxw" path="res://Assets/particle.png" id="4_6vrm7"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tlx78"]
+radius = 22.8363
+height = 45.6727
+
+[node name="Item" type="Sprite2D"]
+z_index = -1
+texture = ExtResource("1_y5fmk")
+script = ExtResource("2_wtlj0")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+show_behind_parent = true
+amount = 20
+lifetime = 1.5
+randomness = 1.0
+lifetime_randomness = 0.1
+texture = ExtResource("4_6vrm7")
+emission_shape = 1
+emission_sphere_radius = 30.0
+direction = Vector2(0, 0)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 14.09
+initial_velocity_max = 14.09
+scale_amount_max = 5.0
+
+[node name="StartParticles" type="Timer" parent="."]
+wait_time = 0.6
+one_shot = true
+autostart = true
+
+[node name="CollectionArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollectionArea"]
+shape = SubResource("CapsuleShape2D_tlx78")
+disabled = true
+
+[connection signal="timeout" from="StartParticles" to="." method="OnStartParticlesTimeout"]
+[connection signal="body_entered" from="CollectionArea" to="." method="OnCollectionAreaBodyEntered"]

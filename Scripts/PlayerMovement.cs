@@ -2,7 +2,6 @@
 
 public class PlayerMovement : MovementComponent
 {
-    public const float Speed = 400.0f;
     public const float JumpVelocity = -400.0f;
     public override void Move(CharacterBody2D body, double delta)
     {
@@ -29,7 +28,7 @@ public class PlayerMovement : MovementComponent
         direction = direction.Normalized();
         if (direction != Vector2.Zero)
         {
-            velChange.X = direction.X * Speed * (1 + 0.10f * player.ItemCount("SpeedBoost"));
+            velChange.X = direction.X * Speed * (1 + 0.10f * player.GetItemCount(Item.ItemType.SpeedBoost));
             player.facingRight = velChange.X > 0;
         }
         else
