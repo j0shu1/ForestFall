@@ -19,6 +19,10 @@ public partial class Hud : CanvasLayer
 	private Label _itemNameLabel;
 	[Export]
 	private Label _itemDescriptionLabel;
+	[Export]
+	private TextureProgressBar _enemyLevelBar;
+	[Export]
+	private Label _enemyLevelLabel;
 
 	private Queue _itemCollectionQueue = new();
 
@@ -69,5 +73,18 @@ public partial class Hud : CanvasLayer
 		_itemDescriptionLabel.Text = Item.GetDescription(itemType);
 	}
 
+	private void OnEnemyLevelTimerTimeout()
+	{
+		_enemyLevelBar.Value++;
 
+		if (_enemyLevelBar.Value > _enemyLevelBar.MaxValue)
+			LevelUpEnemies();
+	}
+
+	private void LevelUpEnemies()
+	{
+		Enemy.Level++;
+		_enemyLevelLabel.Text = $"Enemy Level: {Enemy.Level}";
+		_enemyLevelBar.Value = 0;
+	}
 }

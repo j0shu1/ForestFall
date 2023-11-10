@@ -29,7 +29,7 @@ public class PlayerMovement : MovementComponent
         if (direction != Vector2.Zero)
         {
             velChange.X = direction.X * Speed * (1 + 0.10f * player.GetItemCount(Item.ItemType.SpeedBoost));
-            player.facingRight = velChange.X > 0;
+            player.FacingRight = velChange.X > 0;
         }
         else
         {
@@ -37,5 +37,6 @@ public class PlayerMovement : MovementComponent
         }
 
         player.Velocity = velChange;
+        player.MoveAndSlide();
     }
 }

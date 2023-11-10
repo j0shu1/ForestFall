@@ -3,6 +3,7 @@ using System;
 
 public partial class DamageParticle : Node2D
 {
+	[Export]
 	private Label _damageLabel;
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -12,7 +13,6 @@ public partial class DamageParticle : Node2D
 
     public override void _Ready()
     {
-		_damageLabel ??= GetNode<Label>("Label");
 		Tween tween = CreateTween();
 		tween.SetParallel(true);
 

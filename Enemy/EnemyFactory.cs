@@ -20,7 +20,19 @@ public static class EnemyFactory
     {
         Enemy enemy = _minionScene.Instantiate<Enemy>();
         enemy.GlobalPosition = location;
-        //enemy.MovementComponent = movementType;
+        
+        switch (movementType)
+        {
+            case MovementType.Default:
+                enemy.MovementComponent = new EnemyMovement();
+                break;
+            case MovementType.None:
+                enemy.MovementComponent = new NoMovement();
+                break;
+        }
+
+        enemy.MovementComponent.Speed = 200.0f;
+
         return enemy;
     }
 }

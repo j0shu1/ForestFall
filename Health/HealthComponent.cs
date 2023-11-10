@@ -99,6 +99,8 @@ public partial class HealthComponent : Node
             _health = _maxHealth;
             _regenTimer.Stop();
         }
+
+        HealthBar.Value = _health;
     }
 }
 

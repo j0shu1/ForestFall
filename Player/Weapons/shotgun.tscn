@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://xasnob8j1x03"]
+[gd_scene load_steps=6 format=3 uid="uid://xasnob8j1x03"]
 
 [ext_resource type="Script" path="res://Player/Weapons/Shotgun.cs" id="1_f0uhy"]
 [ext_resource type="Texture2D" uid="uid://c1g3s5kwexmwu" path="res://Assets/shotgun.png" id="2_sqdht"]
+[ext_resource type="PackedScene" uid="uid://c7sp61jc7krf" path="res://Bullet/bullet.tscn" id="2_u5p5s"]
 
 [sub_resource type="Curve" id="Curve_garh1"]
 _data = [Vector2(0.0117647, 1), 0.0, 0.0, 0, 0, Vector2(0.584314, 0.894737), 0.0, 0.0, 0, 0, Vector2(1, 0.0315789), 0.0, 0.0, 0, 0]
@@ -11,9 +12,12 @@ point_count = 3
 offsets = PackedFloat32Array(0, 0.446429)
 colors = PackedColorArray(1, 0.227451, 0, 1, 0, 0, 0, 1)
 
-[node name="Shotgun" type="Node2D" node_paths=PackedStringArray("_shotBurst")]
+[node name="Shotgun" type="Node2D" node_paths=PackedStringArray("_shotBurst", "_reloadTimer", "_bulletSpawnLocation")]
 script = ExtResource("1_f0uhy")
 _shotBurst = NodePath("Sprite2D/ShotBurst")
+_reloadTimer = NodePath("ReloadTimer")
+_bulletSpawnLocation = NodePath("Sprite2D/BulletSpawnLocation")
+_bulletScene = ExtResource("2_u5p5s")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
@@ -38,3 +42,8 @@ color_ramp = SubResource("Gradient_orl7l")
 
 [node name="BulletSpawnLocation" type="Marker2D" parent="Sprite2D"]
 position = Vector2(49, -7)
+
+[node name="ReloadTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[connection signal="timeout" from="ReloadTimer" to="." method="OnReloadTimerTimeout"]

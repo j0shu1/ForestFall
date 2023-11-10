@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dyqnmwklhnfpx" path="res://Assets/bullet_shell_spent.png" id="4_ou0oj"]
 [ext_resource type="Texture2D" uid="uid://dgt2rjih04fqg" path="res://Assets/bullet_shell.png" id="5_7c76i"]
 
-[node name="HUD" type="CanvasLayer" node_paths=PackedStringArray("_healthBar", "_magazineBackground", "_magazineForeground", "_itemPanelContainer", "_displayTimer", "_itemImage", "_itemNameLabel", "_itemDescriptionLabel")]
+[node name="HUD" type="CanvasLayer" node_paths=PackedStringArray("_healthBar", "_magazineBackground", "_magazineForeground", "_itemPanelContainer", "_displayTimer", "_itemImage", "_itemNameLabel", "_itemDescriptionLabel", "_enemyLevelBar", "_enemyLevelLabel")]
 script = ExtResource("1_trum7")
 _healthBar = NodePath("HealthBar")
 _magazineBackground = NodePath("Magazine/MagazineBackground")
@@ -17,6 +17,8 @@ _displayTimer = NodePath("DisplayTimer")
 _itemImage = NodePath("ItemPanelContainer/MarginContainer/HBoxContainer/ItemImage")
 _itemNameLabel = NodePath("ItemPanelContainer/MarginContainer/HBoxContainer/VBoxContainer/ItemName")
 _itemDescriptionLabel = NodePath("ItemPanelContainer/MarginContainer/HBoxContainer/VBoxContainer/ItemDescription")
+_enemyLevelBar = NodePath("EnemyLevel/MarginContainer/EnemyLevelBar")
+_enemyLevelLabel = NodePath("EnemyLevel/MarginContainer/EnemyLevelBar/EnemyLevelLabel")
 
 [node name="HealthBar" type="TextureProgressBar" parent="."]
 offset_left = 116.0
@@ -89,4 +91,39 @@ text = "This is a description where many words describe how it works."
 [node name="DisplayTimer" type="Timer" parent="."]
 wait_time = 4.0
 
+[node name="EnemyLevel" type="PanelContainer" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -228.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 94.0
+grow_horizontal = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="EnemyLevel"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 6
+
+[node name="EnemyLevelBar" type="TextureProgressBar" parent="EnemyLevel/MarginContainer"]
+layout_mode = 2
+max_value = 59.0
+allow_greater = true
+texture_under = ExtResource("2_r43me")
+texture_progress = ExtResource("3_62h5m")
+tint_progress = Color(0.780392, 0, 0, 1)
+
+[node name="EnemyLevelTimer" type="Timer" parent="EnemyLevel/MarginContainer/EnemyLevelBar"]
+autostart = true
+
+[node name="EnemyLevelLabel" type="Label" parent="EnemyLevel/MarginContainer/EnemyLevelBar"]
+offset_left = 4.0
+offset_top = -15.0
+offset_right = 119.0
+offset_bottom = 11.0
+text = "Enemy Level: 1"
+
 [connection signal="timeout" from="DisplayTimer" to="." method="OnDisplayTimerTimeout"]
+[connection signal="timeout" from="EnemyLevel/MarginContainer/EnemyLevelBar/EnemyLevelTimer" to="." method="OnEnemyLevelTimerTimeout"]

@@ -5,10 +5,11 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_no8nv"]
 
-[node name="Bullet" type="CharacterBody2D"]
+[node name="Bullet" type="CharacterBody2D" node_paths=PackedStringArray("_sprite")]
 collision_layer = 2
 slide_on_ceiling = false
 script = ExtResource("1_dele0")
+_sprite = NodePath("Sprite2D")
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

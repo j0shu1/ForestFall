@@ -10,11 +10,6 @@ public partial class Handgun : Gun
         _shots = _magazineCapacity;
         _attackCooldown = ATTACK_COOLDOWN_BASE;
         _reloadTime = 1.0f;
-
-        _weaponScene = (PackedScene)ResourceLoader.Load("res://Player/Weapons/handgun.tscn");
-        _bulletScene = (PackedScene)ResourceLoader.Load("res://Bullet/bullet.tscn");
-
-        _bulletSpawnLocation = GetNode<Sprite2D>("Sprite2D").GetNode<Marker2D>("BulletSpawnLocation");
     }
 
     public override void Shoot()

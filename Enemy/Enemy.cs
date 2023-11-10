@@ -1,34 +1,25 @@
 using Godot;
+using System.Net.Security;
 
 public partial class Enemy : CharacterBody2D
 {
 	[Export]
-	private Timer _despawnTimer;
-
-	public const float Speed = 200.0f;
-	public static Player Player;
 	public HealthComponent HealthComponent;
+	[Export]
+	public NavigationAgent2D NavigationAgent;
+	[Export]
+	private Timer _despawnTimer;
+	[Export]
+	private Timer _attackTimer;
 
-	private Player playerTarget;
-	private NavigationAgent2D _navigationAgent;
+	public static int Level = 1;
+	public MovementComponent MovementComponent;
 
-	// Get the gravity from the project settings to be synced with RigidBody nodes.
-	public float gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
-
-    public override void _Ready()
-    {
-		_navigationAgent = GetNode<NavigationAgent2D>("NavigationAgent2D");
-		_navigationAgent.TargetPosition = Player.GlobalPosition;
-        HealthComponent = GetNode<HealthComponent>("HealthComponent");
-    }
+	private Player _playerTarget;
 
     public override void _PhysicsProcess(double delta)
 	{
-        var direction = ToLocal(_navigationAgent.GetNextPathPosition()).Normalized();
-        direction *= Speed;
-        Velocity = new Vector2(direction.X, Velocity.Y + (float)(gravity * delta));
-
-        MoveAndSlide();
+		MovementComponent.Move(this, delta);
     }
     public void Hurt(int amount)
 	{
@@ -39,33 +30,79 @@ public partial class Enemy : CharacterBody2D
 	{
 		if (body is Player player)
 		{
-			playerTarget = player;
-			AttackPlayerWhileInRange();
+			_playerTarget = player;
+			_attackTimer.Start();
 		}
 	}
 
 	private void OnAttackAreaBodyExited(Node2D body)
 	{
-		if (body == playerTarget)
+		if (body == _playerTarget)
 		{
-			playerTarget = null;
+			_playerTarget = null;
+			_attackTimer.Stop();
 		}
 	}
 
-	private async void AttackPlayerWhileInRange()
+    private void OnAttackTimerTimeout()
 	{
-        while (playerTarget is not null)
-		{
-			playerTarget.Hurt(5);
-			await ToSignal(GetTree().CreateTimer(2.5), SceneTreeTimer.SignalName.Timeout);
-        }
-    }
+		// If the player is not null, hurt them.
+		_playerTarget?.Hurt(5);
+	}
 
 	private void OnGetNextPathTimeout()
 	{
-		_navigationAgent.TargetPosition = Player.GlobalPosition;
+		// If there is no player in our attack range, move toward them.
+        if (_playerTarget is null)
+        {
+			TargetClosestPlayer();
+			//NavigationAgent.TargetPosition = Player.GlobalPosition;
+        }
+		else
+		{
+			// If there is a player in our attack range, don't move.
+			NavigationAgent.TargetPosition = GlobalPosition;
+		}
 	}
-	
+
+	private void TargetClosestPlayer()
+	{
+		// Get the players from the tree.
+		var players = GetTree().GetNodesInGroup("Player");
+
+		// If there is only one player, target them.
+		if (players.Count == 1)
+		{
+			Player target = (Player)players[0];
+			NavigationAgent.TargetPosition = target.Position;
+			return;
+		}
+
+		// Otherwise, target the closest player instead.
+		double closestDistance = 0;
+		Player targetPlayer = (Player)players[0];
+		foreach (var player in players)
+		{
+			// Cast the player as a Player object.
+			Player currPlayer = (Player)player;
+
+			Vector2 location = currPlayer.GlobalPosition;
+			Vector2 difference = GlobalPosition - location;
+
+			// Find the total distance to this player.
+			double totalDistance = Mathf.Sqrt(difference.X * difference.X + difference.Y + difference.Y);
+
+			if (totalDistance < closestDistance)
+			{
+				closestDistance = totalDistance;
+				targetPlayer = currPlayer;
+			}
+		}
+
+		// Once the closest player has been determined, target them.
+		NavigationAgent.TargetPosition = targetPlayer.GlobalPosition;
+	}
+
 	private void OnDespawnTimerTimeout()
 	{
 		// TODO: Disable collisions and movement, Play death animation.

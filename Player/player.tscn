@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Player/Player.cs" id="1_1mqdr"]
 [ext_resource type="Texture2D" uid="uid://b0h5revrk6dok" path="res://icon.svg" id="1_46gav"]
-[ext_resource type="PackedScene" uid="uid://cothk4kk28nkx" path="res://Scenes/health_component.tscn" id="3_43dq7"]
+[ext_resource type="PackedScene" uid="uid://cothk4kk28nkx" path="res://Health/health_component.tscn" id="3_43dq7"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_p6hux"]
 animations = [{

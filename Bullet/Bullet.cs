@@ -7,6 +7,9 @@ public partial class Bullet : CharacterBody2D
 	public int Damage;
 	public const float Speed = 2000.0f;
 
+	[Export]
+	private Sprite2D _sprite;
+
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	public float gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
 
@@ -15,7 +18,7 @@ public partial class Bullet : CharacterBody2D
 		if (Crit)
 		{
 			Damage *= 2;
-			GetNode<Sprite2D>("Sprite2D").Modulate = Color.Color8(255, 0, 0);
+			_sprite.Modulate = Color.Color8(255, 0, 0);
 		}
     }
 

@@ -4,17 +4,13 @@ public partial class Chest : StaticBody2D
 {
 	[Export]
 	private bool _debug = false;
-
+	[Export]
+	private PanelContainer _panelContainer;
+	[Export]
 	private Label _prompt;
+
 	private bool _playerInRange = false;
 	private bool _opened = false;
-	private PanelContainer _container;
-
-    public override void _Ready()
-    {
-		_container = GetNode<PanelContainer>("PanelContainer");
-		_prompt = _container.GetNode<Label>("Label");
-    }
 
     public override void _UnhandledInput(InputEvent @event)
     {
@@ -65,7 +61,7 @@ public partial class Chest : StaticBody2D
 
 	private void SetPromptVisibility(bool visible)
 	{
-        _container.Visible = visible;
+        _panelContainer.Visible = visible;
 
 		if (visible)
 		{

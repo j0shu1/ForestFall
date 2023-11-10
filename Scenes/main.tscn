@@ -28,8 +28,9 @@ physics_layer_0/collision_layer = 5
 navigation_layer_0/layers = 1
 sources/1 = SubResource("TileSetAtlasSource_4l5rn")
 
-[node name="Main" type="Node"]
+[node name="Main" type="Node" node_paths=PackedStringArray("_playerSpawnLocation")]
 script = ExtResource("1_t4uv8")
+_playerSpawnLocation = NodePath("PlayerSpawnLocation")
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_gs4ch")

@@ -2,9 +2,11 @@
 
 public abstract partial class Gun : WeaponComponent
 {
-    protected PackedScene _bulletScene;
-    protected PackedScene _weaponScene;
+    [Export]
     protected Marker2D _bulletSpawnLocation;
+    [Export]
+    protected PackedScene _bulletScene;
+
     protected int _magazineCapacity;
     protected int _shots;
     protected float _reloadTime;
@@ -14,8 +16,16 @@ public abstract partial class Gun : WeaponComponent
     {
         Shoot();
     }
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        if (Input.IsActionJustPressed("reload"))
+        {
+            Reload();
+        }
+    }
+
     public abstract void Shoot();
-    protected async void Reload()
+    protected virtual async void Reload()
     {
         if (!_attackEnabled) return; // Let whatever disabled shooting enable it again.
 

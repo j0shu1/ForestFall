@@ -4,6 +4,8 @@ public partial class Shotgun : Gun
 {
     [Export]
     private CpuParticles2D _shotBurst;
+    [Export]
+    private Timer _reloadTimer;
 
     private const int BULLETS_PER_SHOT = 6;
     private const float ATTACK_COOLDOWN_BASE = 1.5f;
@@ -15,23 +17,23 @@ public partial class Shotgun : Gun
         _attackCooldown = ATTACK_COOLDOWN_BASE;
         _reloadTime = 3.0f;
 
-        _weaponScene = (PackedScene)ResourceLoader.Load("res://Player/Weapons/shotgun.tscn");
-        _bulletScene = (PackedScene)ResourceLoader.Load("res://Bullet/bullet.tscn");
-
-        _bulletSpawnLocation = GetNode<Sprite2D>("Sprite2D").GetNode<Marker2D>("BulletSpawnLocation");
-
         Main.Hud.SetMaxBullets(4);
     }
 
     public override void Shoot()
     {
-        // Make sure we are using the correct attack cooldown.
-        _attackCooldown = ATTACK_COOLDOWN_BASE - (0.1f * _player.GetItemCount(Item.ItemType.AttackSpeed));
+        // If we cannot attack, don't.
+        if (!_attackEnabled || _shots <= 0) return;
 
-        if (!_attackEnabled) return;
+        // Stop reloading.
+        _reloadTimer.Stop();
+        
+        // Calculate the cooldown time between attacks.
+        _attackCooldown = ATTACK_COOLDOWN_BASE - (0.1f * _player.GetItemCount(Item.ItemType.AttackSpeed));
 
         _shots--;
         FireParticles();
+        Main.Hud.SetBullets(_shots);
 
         int critCount = _player.GetItemCount(Item.ItemType.CritChance);
         bool crit = true;
@@ -61,13 +63,34 @@ public partial class Shotgun : Gun
             _player.GetParent().AddChild(bullet);
         }
 
+        Recoil();
+
         if (_shots <= 0)
+        {
             Reload();
+        }
+    }
 
+    protected override void Reload()
+    {
+        if (_shots < _magazineCapacity)
+        {
+            _reloadTimer.Start();
+        }
+    }
+
+    private void OnReloadTimerTimeout()
+    {
+        if (_shots >= _magazineCapacity)
+        {
+            _shots = _magazineCapacity;
+            _reloadTimer.Stop();
+        }
         else
-            Recoil();
-
-        Main.Hud.SetBullets(_shots);
+        {
+            _shots++;
+            Main.Hud.SetBullets(_shots);
+        }
     }
 
     private void FireParticles()

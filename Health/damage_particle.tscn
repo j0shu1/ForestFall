@@ -1,9 +1,10 @@
 [gd_scene load_steps=2 format=3 uid="uid://dgqqspyqq8n5i"]
 
-[ext_resource type="Script" path="res://Scripts/DamageParticle.cs" id="1_wdbmo"]
+[ext_resource type="Script" path="res://Health/DamageParticle.cs" id="1_wdbmo"]
 
-[node name="DamageParticle" type="Node2D"]
+[node name="DamageParticle" type="Node2D" node_paths=PackedStringArray("_damageLabel")]
 script = ExtResource("1_wdbmo")
+_damageLabel = NodePath("Label")
 
 [node name="Label" type="Label" parent="."]
 offset_left = -20.0
