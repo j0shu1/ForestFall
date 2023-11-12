@@ -43,7 +43,6 @@ position = Vector2(556, 412)
 
 [node name="Chest" parent="." instance=ExtResource("4_ypn3v")]
 position = Vector2(-325, 480)
-_debug = true
 
 [node name="HUD" parent="." instance=ExtResource("5_viev7")]
 

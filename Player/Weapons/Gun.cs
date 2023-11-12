@@ -18,7 +18,7 @@ public abstract partial class Gun : WeaponComponent
     }
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (Input.IsActionJustPressed("reload"))
+        if (Input.IsActionPressed("reload"))
         {
             Reload();
         }
