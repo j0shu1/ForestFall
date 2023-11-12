@@ -3,12 +3,19 @@ using System.Collections;
 
 public partial class Hud : CanvasLayer
 {
+	// Health bar components.
 	[Export]
 	private TextureProgressBar _healthBar;
+	[Export]
+	private Label _healthLabel;
+
+	// Ammunition UI components.
 	[Export]
 	private Sprite2D _magazineBackground;
 	[Export]
 	private Sprite2D _magazineForeground;
+
+	// Item collection components.
 	[Export]
 	private PanelContainer _itemPanelContainer;
 	[Export]
@@ -19,10 +26,21 @@ public partial class Hud : CanvasLayer
 	private Label _itemNameLabel;
 	[Export]
 	private Label _itemDescriptionLabel;
+
+	// Enemy level components.
 	[Export]
 	private TextureProgressBar _enemyLevelBar;
 	[Export]
 	private Label _enemyLevelLabel;
+
+	// Player level components.
+	[Export]
+	private TextureProgressBar _expBar;
+	[Export]
+	private Label _currentLevelLabel;
+	[Export]
+	private Label _nextLevelLabel;
+
 
 	private Queue _itemCollectionQueue = new();
 
@@ -87,4 +105,14 @@ public partial class Hud : CanvasLayer
 		_enemyLevelLabel.Text = $"Enemy Level: {Enemy.Level}";
 		_enemyLevelBar.Value = 0;
 	}
+
+	private void OnHealthBarValueChanged(float value)
+	{
+		_healthLabel.Text = $"{_healthBar.Value}/{_healthBar.MaxValue}";
+	}
+
+	private void OnHealthBarChanged()
+	{
+		_healthLabel.Text = $"{_healthBar.Value}/{_healthBar.MaxValue}";
+    }
 }

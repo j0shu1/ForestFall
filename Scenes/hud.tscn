@@ -1,15 +1,18 @@
-[gd_scene load_steps=7 format=3 uid="uid://5c3ymepd7hj4"]
+[gd_scene load_steps=9 format=3 uid="uid://5c3ymepd7hj4"]
 
 [ext_resource type="Script" path="res://Scripts/Hud.cs" id="1_trum7"]
+[ext_resource type="Texture2D" uid="uid://d257m2batxv4g" path="res://Assets/exp_empty.png" id="2_8yvis"]
 [ext_resource type="Texture2D" uid="uid://b0h5revrk6dok" path="res://icon.svg" id="2_hyol3"]
 [ext_resource type="Texture2D" uid="uid://t0jwsv2gpc5g" path="res://Assets/health_empty.png" id="2_r43me"]
+[ext_resource type="Texture2D" uid="uid://cpkr3gc1vskjk" path="res://Assets/exp_full.png" id="3_2a38t"]
 [ext_resource type="Texture2D" uid="uid://c26g381f11t0b" path="res://Assets/health_full.png" id="3_62h5m"]
 [ext_resource type="Texture2D" uid="uid://dyqnmwklhnfpx" path="res://Assets/bullet_shell_spent.png" id="4_ou0oj"]
 [ext_resource type="Texture2D" uid="uid://dgt2rjih04fqg" path="res://Assets/bullet_shell.png" id="5_7c76i"]
 
-[node name="HUD" type="CanvasLayer" node_paths=PackedStringArray("_healthBar", "_magazineBackground", "_magazineForeground", "_itemPanelContainer", "_displayTimer", "_itemImage", "_itemNameLabel", "_itemDescriptionLabel", "_enemyLevelBar", "_enemyLevelLabel")]
+[node name="HUD" type="CanvasLayer" node_paths=PackedStringArray("_healthBar", "_healthLabel", "_magazineBackground", "_magazineForeground", "_itemPanelContainer", "_displayTimer", "_itemImage", "_itemNameLabel", "_itemDescriptionLabel", "_enemyLevelBar", "_enemyLevelLabel", "_expBar", "_currentLevelLabel", "_nextLevelLabel")]
 script = ExtResource("1_trum7")
 _healthBar = NodePath("HealthBar")
+_healthLabel = NodePath("HealthBar/HealthLabel")
 _magazineBackground = NodePath("Magazine/MagazineBackground")
 _magazineForeground = NodePath("Magazine/MagazineForeground")
 _itemPanelContainer = NodePath("ItemPanelContainer")
@@ -19,6 +22,35 @@ _itemNameLabel = NodePath("ItemPanelContainer/MarginContainer/HBoxContainer/VBox
 _itemDescriptionLabel = NodePath("ItemPanelContainer/MarginContainer/HBoxContainer/VBoxContainer/ItemDescription")
 _enemyLevelBar = NodePath("EnemyLevel/MarginContainer/EnemyLevelBar")
 _enemyLevelLabel = NodePath("EnemyLevel/MarginContainer/EnemyLevelBar/EnemyLevelLabel")
+_expBar = NodePath("ExpBar")
+_currentLevelLabel = NodePath("ExpBar/CurrentLevel")
+_nextLevelLabel = NodePath("ExpBar/NextLevel")
+
+[node name="ExpBar" type="TextureProgressBar" parent="."]
+offset_left = 116.0
+offset_top = 539.0
+offset_right = 316.0
+offset_bottom = 579.0
+value = 100.0
+texture_under = ExtResource("2_8yvis")
+texture_progress = ExtResource("3_2a38t")
+tint_progress = Color(0.521569, 0.65098, 0.858824, 1)
+
+[node name="CurrentLevel" type="Label" parent="ExpBar"]
+layout_mode = 0
+offset_left = -40.0
+offset_top = -7.0
+offset_bottom = 20.0
+text = "1"
+horizontal_alignment = 2
+
+[node name="NextLevel" type="Label" parent="ExpBar"]
+layout_mode = 0
+offset_left = 202.0
+offset_top = -7.0
+offset_right = 242.0
+offset_bottom = 19.0
+text = "2"
 
 [node name="HealthBar" type="TextureProgressBar" parent="."]
 offset_left = 116.0
@@ -31,6 +63,14 @@ texture_under = ExtResource("2_r43me")
 texture_progress = ExtResource("3_62h5m")
 tint_under = Color(0.168627, 0.168627, 0.168627, 1)
 tint_progress = Color(0, 0.588235, 0, 1)
+
+[node name="HealthLabel" type="Label" parent="HealthBar"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 13.0
+offset_right = 49.0
+offset_bottom = 39.0
+text = "12/16"
 
 [node name="Magazine" type="Node2D" parent="."]
 position = Vector2(116, 593)
@@ -119,11 +159,14 @@ tint_progress = Color(0.780392, 0, 0, 1)
 autostart = true
 
 [node name="EnemyLevelLabel" type="Label" parent="EnemyLevel/MarginContainer/EnemyLevelBar"]
+layout_mode = 0
 offset_left = 4.0
 offset_top = -15.0
 offset_right = 119.0
 offset_bottom = 11.0
 text = "Enemy Level: 1"
 
+[connection signal="changed" from="HealthBar" to="." method="OnHealthBarChanged"]
+[connection signal="value_changed" from="HealthBar" to="." method="OnHealthBarValueChanged"]
 [connection signal="timeout" from="DisplayTimer" to="." method="OnDisplayTimerTimeout"]
 [connection signal="timeout" from="EnemyLevel/MarginContainer/EnemyLevelBar/EnemyLevelTimer" to="." method="OnEnemyLevelTimerTimeout"]

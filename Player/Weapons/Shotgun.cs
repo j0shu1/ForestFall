@@ -1,4 +1,5 @@
 ﻿using Godot;
+using System.Xml.Serialization;
 
 public partial class Shotgun : Gun
 {
@@ -6,7 +7,10 @@ public partial class Shotgun : Gun
     private CpuParticles2D _shotBurst;
     [Export]
     private Timer _reloadTimer;
+    [Export]
+    private Timer _kickCooldownTimer;
 
+    private bool _canKick = true;
     private const int BULLETS_PER_SHOT = 6;
     private const float ATTACK_COOLDOWN_BASE = 1.5f;
     public override void _Ready()
@@ -25,8 +29,18 @@ public partial class Shotgun : Gun
         // If we cannot attack, don't.
         if (!_attackEnabled || _shots <= 0) return;
 
-        // Stop reloading.
-        _reloadTimer.Stop();
+        // Handle shooting while reloading.
+        if (_reloadTimer.TimeLeft > 0)
+        {
+            // TODO: Play interrupt reload sound.
+            // Disable shooting.
+            Recoil();
+            // Stop reloading.
+            _reloadTimer.Stop();
+
+            // Don't shoot this time.
+            return;
+        }
         
         // Calculate the cooldown time between attacks.
         _attackCooldown = ATTACK_COOLDOWN_BASE - (0.1f * _player.GetItemCount(Item.ItemType.AttackSpeed));
@@ -54,13 +68,17 @@ public partial class Shotgun : Gun
 
             bullet.Position = _bulletSpawnLocation.GlobalPosition;
             bullet.Velocity = bullet.Position - _player.Position + random_offset;
-
-            // Kick the player away from the bullet velocity.
-            _player.Velocity -= new Vector2(x:bullet.Velocity.X, y:bullet.Velocity.Y);
-            // Move the player after each bullet is fired.
-            _player.MoveAndSlide();
-
             _player.GetParent().AddChild(bullet);
+
+            if (_canKick)
+            {
+                _canKick = false;
+                _kickCooldownTimer.Start();
+                // Kick the player away from the bullet velocity. Multiply kick by number of shots.
+                _player.Velocity -= new Vector2(x:bullet.Velocity.X, y:bullet.Velocity.Y) * BULLETS_PER_SHOT;
+                // Move the player after each bullet is fired.
+                _player.MoveAndSlide();
+            }
         }
 
         Recoil();
@@ -96,5 +114,10 @@ public partial class Shotgun : Gun
     private void FireParticles()
     {
         _shotBurst.Emitting = true;
+    }
+
+    private void OnKickCooldownTimerTimeout()
+    {
+        _canKick = true;
     }
 }

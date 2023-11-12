@@ -12,10 +12,11 @@ point_count = 3
 offsets = PackedFloat32Array(0, 0.446429)
 colors = PackedColorArray(1, 0.227451, 0, 1, 0, 0, 0, 1)
 
-[node name="Shotgun" type="Node2D" node_paths=PackedStringArray("_shotBurst", "_reloadTimer", "_bulletSpawnLocation")]
+[node name="Shotgun" type="Node2D" node_paths=PackedStringArray("_shotBurst", "_reloadTimer", "_kickCooldownTimer", "_bulletSpawnLocation")]
 script = ExtResource("1_f0uhy")
 _shotBurst = NodePath("Sprite2D/ShotBurst")
 _reloadTimer = NodePath("ReloadTimer")
+_kickCooldownTimer = NodePath("KickCooldownTimer")
 _bulletSpawnLocation = NodePath("Sprite2D/BulletSpawnLocation")
 _bulletScene = ExtResource("2_u5p5s")
 
@@ -46,4 +47,9 @@ position = Vector2(49, -7)
 [node name="ReloadTimer" type="Timer" parent="."]
 wait_time = 0.5
 
+[node name="KickCooldownTimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
 [connection signal="timeout" from="ReloadTimer" to="." method="OnReloadTimerTimeout"]
+[connection signal="timeout" from="KickCooldownTimer" to="." method="OnKickCooldownTimerTimeout"]
