@@ -9,28 +9,35 @@ public partial class Chest : StaticBody2D
 	[Export]
 	private Label _prompt;
 
-	private bool _playerInRange = false;
+	private Player _playerInRange;
 	private bool _opened = false;
+	private static int _cost; // This must be set externally through SetChestCost.
 
     public override void _UnhandledInput(InputEvent @event)
     {
         if (@event is InputEvent input)
 		{
-			if (input.IsActionPressed("interact") && _playerInRange && !_opened)
+			if (input.IsActionPressed("interact") && _playerInRange is not null && !_opened)
 			{
-				OpenChest();
+				if (_playerInRange.Purchase(_cost))
+					OpenChest();
 			}
 		}
     }
+
+	public static void SetChestCost(int cost)
+	{
+		_cost = cost;
+	}
 
     private void OnInteractionAreaBodyEntered(Node2D body)
 	{
 		if (_opened)
 			return;
 
-		if (body is Player)
+		if (body is Player player)
 		{
-			_playerInRange = true;
+			_playerInRange = player;
 			SetPromptVisibility(true);
 		}
 	}
@@ -42,7 +49,7 @@ public partial class Chest : StaticBody2D
 
 		if (body is Player)
 		{
-			_playerInRange = false;
+			_playerInRange = null;
             SetPromptVisibility(false);
         }
     }
@@ -65,7 +72,7 @@ public partial class Chest : StaticBody2D
 
 		if (visible)
 		{
-            _prompt.Text = Input.GetConnectedJoypads().Count > 0 ? "Press X to interact" : "Press E to interact";
+            _prompt.Text = Input.GetConnectedJoypads().Count > 0 ? $"Press X to interact (Cost: {_cost})" : $"Press E to interact (Cost: {_cost})";
         }
 		else
 		{

@@ -9,23 +9,33 @@ public partial class HealthComponent : Node
     [Export]
     private PackedScene _damageParticleScene;
 
-    private int _health;
-    private int _maxHealth = 10;
+    private int _health = 0;
+    private int _maxHealth = 0;
     private int _regenAmount = 1;
     protected Node2D _parent;
 
+    private float _healthIncreaseMultiplier = 0;
+    private int _linearHealthIncrease = 10;
     public override void _Ready()
     {
         _parent = (Node2D)GetParent();
         _health = _maxHealth;
 
-        HealthBar.MaxValue = _maxHealth;
-        HealthBar.Value = _health;
+        UpdateHealthBar();
     }
 
     public int GetHealth()
     {
         return _health;
+    }
+
+    public void LevelUp()
+    {
+        int healthIncrease = _linearHealthIncrease + (int)(_maxHealth * _healthIncreaseMultiplier);
+        _maxHealth += healthIncrease;
+        _health += healthIncrease;
+        
+        UpdateHealthBar();
     }
 
     public bool IsDead()
@@ -36,6 +46,18 @@ public partial class HealthComponent : Node
     public void SetInitialMaxHealth(int maxHealth)
     {
         _maxHealth = maxHealth;
+        _health = maxHealth;
+        UpdateHealthBar();
+    }
+
+    public void SetHealthIncreaseMultiplier(float multiplier)
+    {
+        _healthIncreaseMultiplier = multiplier;
+    }
+
+    public void SetLinearHealthIncrease(int increase)
+    {
+        _linearHealthIncrease = increase;
     }
 
     public void Hurt(int damage)
@@ -61,22 +83,21 @@ public partial class HealthComponent : Node
 
         //GD.Print($"{_parent.Name} took {damage} damage.");
         _health -= damage;
+        UpdateHealthBar();
         _regenTimer.Start();
 
         SpawnDamageParticle(damage);
-        HealthBar.Value = _health;
 
         if (_health <= 0)
         {
             //GD.Print($"{_parent.Name} died.");
-            // TODO: Play death animation, disable movement.
-            if (_parent is not Player)
-                _parent.QueueFree();
-            else
+            if (_parent is Enemy enemy)
             {
-                // Player death animation.
-                // Change scene to game over.
-                // Show statistics for the run.
+                enemy.Die();
+            }
+            else if (_parent is Player p)
+            {
+                p.Die();
             }
         }
     }
@@ -100,6 +121,12 @@ public partial class HealthComponent : Node
             _regenTimer.Stop();
         }
 
+        UpdateHealthBar();
+    }
+
+    private void UpdateHealthBar()
+    {
+        HealthBar.MaxValue = _maxHealth;
         HealthBar.Value = _health;
     }
 }

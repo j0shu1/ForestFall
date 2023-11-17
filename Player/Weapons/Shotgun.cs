@@ -1,5 +1,4 @@
 ﻿using Godot;
-using System.Xml.Serialization;
 
 public partial class Shotgun : Gun
 {
@@ -63,7 +62,7 @@ public partial class Shotgun : Gun
 
             Bullet bullet = _bulletScene.Instantiate<Bullet>();
 
-            bullet.Damage = 1;
+            bullet.Damage = Player.Level;
             bullet.Crit = crit;
 
             bullet.Position = _bulletSpawnLocation.GlobalPosition;

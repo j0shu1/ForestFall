@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://dyqnmwklhnfpx" path="res://Assets/bullet_shell_spent.png" id="4_ou0oj"]
 [ext_resource type="Texture2D" uid="uid://dgt2rjih04fqg" path="res://Assets/bullet_shell.png" id="5_7c76i"]
 
-[node name="HUD" type="CanvasLayer" node_paths=PackedStringArray("_healthBar", "_healthLabel", "_magazineBackground", "_magazineForeground", "_itemPanelContainer", "_displayTimer", "_itemImage", "_itemNameLabel", "_itemDescriptionLabel", "_enemyLevelBar", "_enemyLevelLabel", "_expBar", "_currentLevelLabel", "_nextLevelLabel")]
+[node name="HUD" type="CanvasLayer" node_paths=PackedStringArray("_healthBar", "_healthLabel", "_magazineBackground", "_magazineForeground", "_itemPanelContainer", "_displayTimer", "_itemImage", "_itemNameLabel", "_itemDescriptionLabel", "_enemyLevelBar", "_enemyLevelLabel", "_expBar", "_currentLevelLabel", "_nextLevelLabel", "_moneyLabel")]
 script = ExtResource("1_trum7")
 _healthBar = NodePath("HealthBar")
 _healthLabel = NodePath("HealthBar/HealthLabel")
@@ -25,13 +25,14 @@ _enemyLevelLabel = NodePath("EnemyLevel/MarginContainer/EnemyLevelBar/EnemyLevel
 _expBar = NodePath("ExpBar")
 _currentLevelLabel = NodePath("ExpBar/CurrentLevel")
 _nextLevelLabel = NodePath("ExpBar/NextLevel")
+_moneyLabel = NodePath("MoneyLabel")
 
 [node name="ExpBar" type="TextureProgressBar" parent="."]
 offset_left = 116.0
 offset_top = 539.0
 offset_right = 316.0
 offset_bottom = 579.0
-value = 100.0
+allow_greater = true
 texture_under = ExtResource("2_8yvis")
 texture_progress = ExtResource("3_2a38t")
 tint_progress = Color(0.521569, 0.65098, 0.858824, 1)
@@ -165,6 +166,13 @@ offset_top = -15.0
 offset_right = 119.0
 offset_bottom = 11.0
 text = "Enemy Level: 1"
+
+[node name="MoneyLabel" type="Label" parent="."]
+offset_left = 57.0
+offset_top = 20.0
+offset_right = 97.0
+offset_bottom = 46.0
+text = "0"
 
 [connection signal="changed" from="HealthBar" to="." method="OnHealthBarChanged"]
 [connection signal="value_changed" from="HealthBar" to="." method="OnHealthBarValueChanged"]

@@ -18,9 +18,10 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xp05h"]
 size = Vector2(15.2, 15.2)
 
-[node name="Player" type="CharacterBody2D" groups=["Player"]]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("HealthComponent") groups=["Player"]]
 collision_mask = 3
 script = ExtResource("1_1mqdr")
+HealthComponent = NodePath("HealthComponent")
 metadata/_edit_group_ = true
 
 [node name="HealthComponent" parent="." instance=ExtResource("3_43dq7")]

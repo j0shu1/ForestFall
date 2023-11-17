@@ -38,6 +38,8 @@ public partial class Main : Node
 		// Attach the camera to the player.
 		AddPlayerCamera(player);
 
+        // Set up the chests.
+        Chest.SetChestCost(10);
 		SpawnChests();
     }
 

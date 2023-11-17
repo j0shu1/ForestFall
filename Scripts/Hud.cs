@@ -41,20 +41,10 @@ public partial class Hud : CanvasLayer
 	[Export]
 	private Label _nextLevelLabel;
 
+	[Export]
+	private Label _moneyLabel;
 
 	private Queue _itemCollectionQueue = new();
-
-	public void DisplayCollectedItem(Item.ItemType itemType)
-	{
-		_itemCollectionQueue.Enqueue(itemType);
-
-		if (_displayTimer.IsStopped())
-		{
-			DisplayNextItem();
-			_itemPanelContainer.Visible = true;
-			_displayTimer.Start();
-		}
-	}
 
 	public void SetMaxBullets(int amount)
 	{
@@ -62,12 +52,30 @@ public partial class Hud : CanvasLayer
 		_magazineBackground.RegionRect = region;
 		_magazineForeground.RegionRect = region;
 	}
+
 	public void SetBullets(int amount)
 	{
 		_magazineForeground.RegionRect = new(0, 0, 10 * amount, 12);
 	}
 
+	public void AddExp(int amount)
+	{
+		_expBar.Value += amount;
 
+		while (_expBar.Value > _expBar.MaxValue)
+		{
+			_expBar.Value -= _expBar.MaxValue;
+			Player.Level++;
+			GetTree().CallGroup("Player", "LevelUp");
+			_currentLevelLabel.Text = Player.Level.ToString();
+			_nextLevelLabel.Text = (Player.Level + 1).ToString();
+		}
+	}
+
+	public void UpdateMoney(int amount)
+	{
+		_moneyLabel.Text = amount.ToString();
+	}
 
 	private void OnDisplayTimerTimeout()
 	{
@@ -80,6 +88,18 @@ public partial class Hud : CanvasLayer
 		}
 
 		DisplayNextItem();
+	}
+
+	public void DisplayCollectedItem(Item.ItemType itemType)
+	{
+		_itemCollectionQueue.Enqueue(itemType);
+
+		if (_displayTimer.IsStopped())
+		{
+			DisplayNextItem();
+			_itemPanelContainer.Visible = true;
+			_displayTimer.Start();
+		}
 	}
 
 	private void DisplayNextItem()
@@ -102,6 +122,7 @@ public partial class Hud : CanvasLayer
 	private void LevelUpEnemies()
 	{
 		Enemy.Level++;
+		GetTree().CallGroup("Enemy", "LevelUp");
 		_enemyLevelLabel.Text = $"Enemy Level: {Enemy.Level}";
 		_enemyLevelBar.Value = 0;
 	}

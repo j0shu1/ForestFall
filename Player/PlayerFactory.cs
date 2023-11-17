@@ -23,7 +23,6 @@ public static class PlayerFactory
         // Create player of type.
         Player player = _playerScene.Instantiate<Player>();
         WeaponComponent weaponComponent = null;
-        player.HealthComponent = player.GetNode<HealthComponent>("HealthComponent");
         player.HealthComponent.HealthBar = Main.Hud.GetNode<TextureProgressBar>("HealthBar");
 
         // Attach movement to player.

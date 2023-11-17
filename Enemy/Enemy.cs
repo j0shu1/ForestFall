@@ -1,5 +1,4 @@
 using Godot;
-using System.Net.Security;
 
 public partial class Enemy : CharacterBody2D
 {
@@ -16,17 +15,39 @@ public partial class Enemy : CharacterBody2D
 	public MovementComponent MovementComponent;
 
 	private Player _playerTarget;
+	private int _maxHealth;
 
     public override void _PhysicsProcess(double delta)
 	{
 		MovementComponent.Move(this, delta);
     }
+
     public void Hurt(int amount)
 	{
 		HealthComponent.Hurt(amount);
 	}
 
-	private void OnAttackAreaBodyEntered(Node2D body)
+	public void Die()
+	{
+        // TODO: Play death animation.
+		// Disable hitbox and movement.
+		GetNode<CollisionShape2D>("CollisionShape2D").Disabled = true;
+		MovementComponent = new NoMovement();
+
+        int exp = 13;
+		Main.Hud.AddExp(exp);
+		GetTree().CallGroup("Player", "AddMoney", GD.RandRange(Level * 5, Level * 10));
+		
+        QueueFree();
+    }
+
+	public void LevelUp()
+	{
+		// TODO: Produce level up particles.
+		HealthComponent.LevelUp();
+	}
+
+    private void OnAttackAreaBodyEntered(Node2D body)
 	{
 		if (body is Player player)
 		{
@@ -118,5 +139,4 @@ public partial class Enemy : CharacterBody2D
 	{
 		_despawnTimer.Stop();
 	}
-
 }

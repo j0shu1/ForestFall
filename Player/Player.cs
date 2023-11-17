@@ -3,12 +3,15 @@ using Godot.Collections;
 
 public partial class Player : CharacterBody2D
 {
+    [Export]
+    public HealthComponent HealthComponent;
 	public MovementComponent MovementComponent;
     public WeaponComponent WeaponComponent;
-    public HealthComponent HealthComponent;
     public bool FacingRight = true;
+    public static int Level = 1;
 
     private Dictionary<Item.ItemType, int> _inventory = new();
+    private int _money;
 
     public override void _PhysicsProcess(double delta)
 	{
@@ -52,5 +55,36 @@ public partial class Player : CharacterBody2D
     public void Hurt(int damage)
     {
         HealthComponent.Hurt(damage);
+    }
+
+    public void AddMoney(int amount)
+    {
+        _money += amount;
+        Main.Hud.UpdateMoney(_money);
+    }
+
+    public bool Purchase(int price)
+    {
+        if (price <= _money)
+        {
+            _money -= price;
+            Main.Hud.UpdateMoney(_money);
+            return true;
+        }
+
+        return false;
+    }
+
+    public void Die()
+    {
+        // Player death animation.
+        // Change scene to game over.
+        // Show statistics for the run.
+    }
+
+    public void LevelUp()
+    {
+        // TODO: Produce level up particles.
+        HealthComponent.LevelUp();
     }
 }

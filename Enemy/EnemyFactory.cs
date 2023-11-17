@@ -32,6 +32,7 @@ public static class EnemyFactory
         }
 
         enemy.MovementComponent.Speed = 200.0f;
+        enemy.HealthComponent.SetInitialMaxHealth(Enemy.Level * 10);
 
         return enemy;
     }
