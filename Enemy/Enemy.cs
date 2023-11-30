@@ -10,10 +10,13 @@ public partial class Enemy : CharacterBody2D
 	private Timer _despawnTimer;
 	[Export]
 	private Timer _attackTimer;
+	[Export]
+	private Timer _attackCooldownTimer;
 
 	public static int Level = 1;
 	public MovementComponent MovementComponent;
 
+	public bool Attacking;
 	private Player _playerTarget;
 	private int _maxHealth;
 
@@ -36,7 +39,7 @@ public partial class Enemy : CharacterBody2D
 
         int exp = 13;
 		Main.Hud.AddExp(exp);
-		GetTree().CallGroup("Player", "AddMoney", GD.RandRange(Level * 5, Level * 10));
+		GetTree().CallGroup("Player", "AddMoney", GD.RandRange(5, 10));
 		
         QueueFree();
     }
@@ -45,6 +48,7 @@ public partial class Enemy : CharacterBody2D
 	{
 		// TODO: Produce level up particles.
 		HealthComponent.LevelUp();
+		GetNode<CpuParticles2D>("LevelUpParticles").Emitting = true;
 	}
 
     private void OnAttackAreaBodyEntered(Node2D body)
@@ -53,10 +57,59 @@ public partial class Enemy : CharacterBody2D
 		{
 			_playerTarget = player;
 			_attackTimer.Start();
+			Attacking = true;
+			_attackCooldownTimer.Start();
+			// TODO: enable the attack hitbox and visibility, tween the rotation from the top to bottom.
+			
+
+			AttackToward(player.GlobalPosition);
+
+			//Tween tween = CreateTween();
+			//_attacking = true;
+			//attackHitBox.Disabled = false;
+			//tween.TweenProperty(attackRotation, "rotation", 90, 1);
+			//_attacking = false;
+			//attackHitBox.Disabled = true;
+
+			// After the tween is completed, disable the hitbox and visibility.
 		}
 	}
 
-	private void OnAttackAreaBodyExited(Node2D body)
+	private async void AttackToward(Vector2 targetPosition)
+	{
+		Node2D attackRotation = GetNode<Node2D>("AttackRotation");
+		CollisionShape2D attackHitBox = GetNode<CollisionShape2D>("AttackRotation/AttackingArea/AttackHitBox");
+		ColorRect colorRect = GetNode<ColorRect>("AttackRotation/AttackingArea/ColorRect");
+		bool isLeft = targetPosition >= GlobalPosition;
+
+		Tween tween = CreateTween().SetParallel(false);
+		double attackTime = 0.25;
+
+		Attacking = true;
+		tween.TweenProperty(attackHitBox, "disabled", false, 0);
+		tween.TweenProperty(colorRect, "visible", true, 0);
+		tween.TweenProperty(attackRotation, "rotation_degrees", isLeft ? 90 : -270, attackTime);
+		tween.TweenProperty(attackHitBox, "disabled", true, 0);
+		tween.TweenProperty(colorRect, "visible", false, 0);
+        attackRotation.RotationDegrees = -90;
+
+		GetNode<AudioStreamPlayer2D>("AttackSound").Play();
+
+        await ToSignal(GetTree().CreateTimer(attackTime * 3), SceneTreeTimer.SignalName.Timeout);
+		Attacking = false;
+
+	}
+
+	private void OnAttackingAreaBodyEntered(Node2D body)
+	{
+		if (body is Player player)
+		{
+			player.Hurt(3 + 3 * Level);
+		}
+	}
+
+
+    private void OnAttackAreaBodyExited(Node2D body)
 	{
 		if (body == _playerTarget)
 		{
@@ -68,13 +121,18 @@ public partial class Enemy : CharacterBody2D
     private void OnAttackTimerTimeout()
 	{
 		// If the player is not null, hurt them.
-		_playerTarget?.Hurt(5);
+		//_playerTarget?.Hurt(3 + 3 * Level);
+	}
+
+	private void OnAttackCooldownTimeout()
+	{
+		Attacking = false;
 	}
 
 	private void OnGetNextPathTimeout()
 	{
 		// If there is no player in our attack range, move toward them.
-        if (_playerTarget is null)
+        if (_playerTarget is null && !Attacking)
         {
 			TargetClosestPlayer();
 			//NavigationAgent.TargetPosition = Player.GlobalPosition;

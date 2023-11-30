@@ -11,7 +11,7 @@ public partial class Shotgun : Gun
 
     private bool _canKick = true;
     private const int BULLETS_PER_SHOT = 6;
-    private const float ATTACK_COOLDOWN_BASE = 1.5f;
+    private const float ATTACK_COOLDOWN_BASE = 1.0f;
     public override void _Ready()
     {
         _player = GetParent<Player>();
@@ -32,6 +32,7 @@ public partial class Shotgun : Gun
         if (_reloadTimer.TimeLeft > 0)
         {
             // TODO: Play interrupt reload sound.
+            GetNode<AudioStreamPlayer2D>("InterruptReload").Play();
             // Disable shooting.
             Recoil();
             // Stop reloading.
@@ -47,6 +48,8 @@ public partial class Shotgun : Gun
         _shots--;
         FireParticles();
         Main.Hud.SetBullets(_shots);
+        // Play firing sound.
+        GetNode<AudioStreamPlayer2D>("ShotgunShot").Play();
 
         int critCount = _player.GetItemCount(Item.ItemType.CritChance);
         bool crit = true;
@@ -80,6 +83,7 @@ public partial class Shotgun : Gun
             }
         }
 
+
         Recoil();
 
         if (_shots <= 0)
@@ -107,6 +111,7 @@ public partial class Shotgun : Gun
         {
             _shots++;
             Main.Hud.SetBullets(_shots);
+            GetNode<AudioStreamPlayer2D>("ReloadSound").Play();
         }
     }
 

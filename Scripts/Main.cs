@@ -3,15 +3,10 @@ using Godot;
 public partial class Main : Node
 {
 	public static Hud Hud;
-	[Export]
-	private Marker2D _playerSpawnLocation;
 
 	private const float TOP_OF_SCENE = 0;
 	private const float BOTTOM_OF_SCENE = 1200;
 	private const int MAX_ENEMIES = 5;
-	private const short CHEST_COUNT = 2;
-	private const int GAME_X_MIN = -1000;
-	private const int GAME_X_MAX = 1000;
 	private static PackedScene _chestScene = (PackedScene)ResourceLoader.Load("res://Chest/chest.tscn");
 
 	private Player _player;
@@ -30,7 +25,7 @@ public partial class Main : Node
         // Spawn the player.
         Player player = PlayerFactory.CreatePlayer(
 			PlayerFactory.EntityType.Shotgunner,
-			_playerSpawnLocation.GlobalPosition);
+			GetNode<Marker2D>("PlayerSpawnLocation").GlobalPosition);
 		AddChild(player);
 
         _player = player;
@@ -39,7 +34,7 @@ public partial class Main : Node
 		AddPlayerCamera(player);
 
         // Set up the chests.
-        Chest.SetChestCost(10);
+        Chest.SetChestCost(37);
 		SpawnChests();
     }
 
@@ -127,7 +122,7 @@ public partial class Main : Node
 		// Determine the random X value.
 		float targetX = _player.GlobalPosition.X;
 		targetX += GD.RandRange(-100, 100);
-		targetX += GD.RandRange(0, 1) == 0 ? -300 : 300;
+		targetX += GD.RandRange(0, 1) == 0 ? 300 : -300;
 
         ray.GlobalPosition = new Vector2(targetX, TOP_OF_SCENE);
         ray.TargetPosition = new Vector2(targetX, BOTTOM_OF_SCENE);

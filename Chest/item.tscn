@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://bj1ftgbyrty6n"]
+[gd_scene load_steps=6 format=3 uid="uid://bj1ftgbyrty6n"]
 
 [ext_resource type="Texture2D" uid="uid://b0h5revrk6dok" path="res://icon.svg" id="1_y5fmk"]
 [ext_resource type="Script" path="res://Chest/Item.cs" id="2_wtlj0"]
 [ext_resource type="Texture2D" uid="uid://b2udp5c183uxw" path="res://Assets/particle.png" id="4_6vrm7"]
+[ext_resource type="AudioStream" uid="uid://dadf7wkfvbct0" path="res://Assets/sounds/pickup_sound.wav" id="4_yjpoi"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tlx78"]
 radius = 22.8363
@@ -40,5 +41,14 @@ autostart = true
 shape = SubResource("CapsuleShape2D_tlx78")
 disabled = true
 
+[node name="PickupSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_yjpoi")
+attenuation = 0.176777
+
+[node name="DespawnTimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
 [connection signal="timeout" from="StartParticles" to="." method="OnStartParticlesTimeout"]
 [connection signal="body_entered" from="CollectionArea" to="." method="OnCollectionAreaBodyEntered"]
+[connection signal="timeout" from="DespawnTimer" to="." method="OnDespawnTimerTimeout"]

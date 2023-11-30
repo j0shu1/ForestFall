@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://c8gm5kq00c54m"]
+[gd_scene load_steps=9 format=3 uid="uid://c8gm5kq00c54m"]
 
 [ext_resource type="Script" path="res://Player/Player.cs" id="1_1mqdr"]
 [ext_resource type="Texture2D" uid="uid://b0h5revrk6dok" path="res://icon.svg" id="1_46gav"]
 [ext_resource type="PackedScene" uid="uid://cothk4kk28nkx" path="res://Health/health_component.tscn" id="3_43dq7"]
+[ext_resource type="Texture2D" uid="uid://ca5qac51p7ssa" path="res://Assets/bullet.png" id="4_5x4m0"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_p6hux"]
 animations = [{
@@ -16,7 +17,14 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xp05h"]
-size = Vector2(15.2, 15.2)
+size = Vector2(16, 16)
+
+[sub_resource type="Curve" id="Curve_b7oga"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_wsh48"]
+colors = PackedColorArray(0.521569, 0.65098, 0.858824, 1, 0, 0, 0, 0)
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("HealthComponent") groups=["Player"]]
 collision_mask = 3
@@ -35,3 +43,20 @@ sprite_frames = SubResource("SpriteFrames_p6hux")
 position = Vector2(-1.43051e-06, 1.66893e-06)
 scale = Vector2(5, 5)
 shape = SubResource("RectangleShape2D_xp05h")
+
+[node name="LevelUpParticles" type="CPUParticles2D" parent="."]
+show_behind_parent = true
+emitting = false
+amount = 50
+one_shot = true
+explosiveness = 1.0
+texture = ExtResource("4_5x4m0")
+emission_shape = 2
+emission_sphere_radius = 80.0
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 20.0
+initial_velocity_max = 35.0
+scale_amount_min = 0.5
+scale_amount_curve = SubResource("Curve_b7oga")
+color_ramp = SubResource("Gradient_wsh48")

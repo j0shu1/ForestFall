@@ -1,10 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://cfbt7h7h2xf20"]
+[gd_scene load_steps=14 format=3 uid="uid://cfbt7h7h2xf20"]
 
 [ext_resource type="Texture2D" uid="uid://b0h5revrk6dok" path="res://icon.svg" id="1_6geut"]
 [ext_resource type="Script" path="res://Enemy/Enemy.cs" id="1_clrx7"]
 [ext_resource type="PackedScene" uid="uid://cothk4kk28nkx" path="res://Health/health_component.tscn" id="2_pvcm2"]
 [ext_resource type="Texture2D" uid="uid://cb7pnkvt5wxe0" path="res://Assets/enemy_empty.png" id="4_4b73e"]
 [ext_resource type="Texture2D" uid="uid://dvydq6l54um7q" path="res://Assets/enemy_full.png" id="5_orp52"]
+[ext_resource type="Texture2D" uid="uid://ca5qac51p7ssa" path="res://Assets/bullet.png" id="6_jjaf5"]
+[ext_resource type="AudioStream" uid="uid://cmm86yoitmtja" path="res://Assets/sounds/swish.wav" id="7_4ug61"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1s7iy"]
 animations = [{
@@ -21,15 +23,26 @@ animations = [{
 radius = 60.075
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p0nj7"]
-size = Vector2(390, 169)
+size = Vector2(200, 200)
 
-[node name="Enemy" type="CharacterBody2D" node_paths=PackedStringArray("HealthComponent", "NavigationAgent", "_despawnTimer", "_attackTimer") groups=["Enemy"]]
+[sub_resource type="CircleShape2D" id="CircleShape2D_kjoeq"]
+radius = 20.0
+
+[sub_resource type="Curve" id="Curve_oppwu"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_5m03x"]
+colors = PackedColorArray(0.431373, 0, 0, 1, 0, 0, 0, 0)
+
+[node name="Enemy" type="CharacterBody2D" node_paths=PackedStringArray("HealthComponent", "NavigationAgent", "_despawnTimer", "_attackTimer", "_attackCooldownTimer") groups=["Enemy"]]
 wall_min_slide_angle = 0.0
 script = ExtResource("1_clrx7")
 HealthComponent = NodePath("HealthComponent")
 NavigationAgent = NodePath("NavigationAgent2D")
 _despawnTimer = NodePath("DespawnTimer")
 _attackTimer = NodePath("AttackTimer")
+_attackCooldownTimer = NodePath("AttackCooldown")
 
 [node name="HealthComponent" parent="." node_paths=PackedStringArray("HealthBar") instance=ExtResource("2_pvcm2")]
 HealthBar = NodePath("../HealthBar")
@@ -73,6 +86,53 @@ tint_progress = Color(0.792157, 0, 0.113725, 1)
 
 [node name="AttackTimer" type="Timer" parent="."]
 
+[node name="AttackCooldown" type="Timer" parent="."]
+one_shot = true
+
+[node name="AttackRotation" type="Node2D" parent="."]
+rotation = -1.5708
+
+[node name="AttackingArea" type="Area2D" parent="AttackRotation"]
+position = Vector2(80, 0)
+
+[node name="AttackHitBox" type="CollisionShape2D" parent="AttackRotation/AttackingArea"]
+shape = SubResource("CircleShape2D_kjoeq")
+disabled = true
+
+[node name="ColorRect" type="ColorRect" parent="AttackRotation/AttackingArea"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LevelUpParticles" type="CPUParticles2D" parent="."]
+show_behind_parent = true
+emitting = false
+amount = 50
+one_shot = true
+explosiveness = 1.0
+texture = ExtResource("6_jjaf5")
+emission_shape = 2
+emission_sphere_radius = 80.0
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 20.0
+initial_velocity_max = 35.0
+scale_amount_min = 0.5
+scale_amount_curve = SubResource("Curve_oppwu")
+color_ramp = SubResource("Gradient_5m03x")
+
+[node name="AttackSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("7_4ug61")
+
 [connection signal="timeout" from="GetNextPath" to="." method="OnGetNextPathTimeout"]
 [connection signal="body_entered" from="AttackArea" to="." method="OnAttackAreaBodyEntered"]
 [connection signal="body_exited" from="AttackArea" to="." method="OnAttackAreaBodyExited"]
@@ -80,3 +140,5 @@ tint_progress = Color(0.792157, 0, 0.113725, 1)
 [connection signal="screen_entered" from="VisibleOnScreenNotifier2D" to="." method="OnVisibleOnScreenNotifier2dScreenEntered"]
 [connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="OnVisibleOnScreenNotifier2dScreenExited"]
 [connection signal="timeout" from="AttackTimer" to="." method="OnAttackTimerTimeout"]
+[connection signal="timeout" from="AttackCooldown" to="." method="OnAttackCooldownTimeout"]
+[connection signal="body_entered" from="AttackRotation/AttackingArea" to="." method="OnAttackingAreaBodyEntered"]

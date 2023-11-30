@@ -47,7 +47,9 @@ public static class PlayerFactory
             case EntityType.Shotgunner:
                 weaponComponent = _shotgunScene.Instantiate<WeaponComponent>();
                 player.MovementComponent.Speed = 300.0f;
-                player.HealthComponent.SetInitialMaxHealth(30);
+                player.HealthComponent.SetInitialMaxHealth(31);
+                player.HealthComponent.SetHealthIncreaseMultiplier(0.01f);
+                player.HealthComponent.SetLinearHealthIncrease(3);
                 break;
         }
 

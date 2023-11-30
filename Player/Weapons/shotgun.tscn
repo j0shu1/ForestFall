@@ -1,8 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://xasnob8j1x03"]
+[gd_scene load_steps=9 format=3 uid="uid://xasnob8j1x03"]
 
 [ext_resource type="Script" path="res://Player/Weapons/Shotgun.cs" id="1_f0uhy"]
 [ext_resource type="Texture2D" uid="uid://c1g3s5kwexmwu" path="res://Assets/shotgun.png" id="2_sqdht"]
 [ext_resource type="PackedScene" uid="uid://c7sp61jc7krf" path="res://Bullet/bullet.tscn" id="2_u5p5s"]
+[ext_resource type="AudioStream" uid="uid://bwh5vc10nf132" path="res://Assets/sounds/shotgun_burst.wav" id="4_wswwq"]
+[ext_resource type="AudioStream" uid="uid://c1u2klh3srykb" path="res://Assets/sounds/Subsequent Shells.mp3" id="5_01wm5"]
+[ext_resource type="AudioStream" uid="uid://bfoyisx8j15al" path="res://Assets/sounds/Shell in Chamber.mp3" id="6_jdl0v"]
 
 [sub_resource type="Curve" id="Curve_garh1"]
 _data = [Vector2(0.0117647, 1), 0.0, 0.0, 0, 0, Vector2(0.584314, 0.894737), 0.0, 0.0, 0, 0, Vector2(1, 0.0315789), 0.0, 0.0, 0, 0]
@@ -50,6 +53,16 @@ wait_time = 0.5
 [node name="KickCooldownTimer" type="Timer" parent="."]
 wait_time = 0.5
 one_shot = true
+
+[node name="ShotgunShot" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_wswwq")
+
+[node name="ReloadSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_01wm5")
+volume_db = -6.771
+
+[node name="InterruptReload" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_jdl0v")
 
 [connection signal="timeout" from="ReloadTimer" to="." method="OnReloadTimerTimeout"]
 [connection signal="timeout" from="KickCooldownTimer" to="." method="OnKickCooldownTimerTimeout"]

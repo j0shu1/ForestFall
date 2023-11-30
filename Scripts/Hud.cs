@@ -43,8 +43,28 @@ public partial class Hud : CanvasLayer
 
 	[Export]
 	private Label _moneyLabel;
+	[Export]
+	private RichTextLabel _statusUpdateLabel;
+	[Export]
+	private PanelContainer _statusUpdate;
 
 	private Queue _itemCollectionQueue = new();
+
+	public void PushCollectedItemStatus(string message)
+	{
+		Timer statusUpdateVisibilityTimer = GetNode<Timer>("StatusUpdate/StatusUpdateVisibilityTimer");
+		_statusUpdate.Visible = true;
+		// AppendText does not require the whole text box to recalculate.
+		_statusUpdateLabel.AppendText(message + "\n");
+		//_statusUpdateLabel.Text += message + "\n";
+
+		if (statusUpdateVisibilityTimer.TimeLeft < statusUpdateVisibilityTimer.WaitTime)
+		{
+			statusUpdateVisibilityTimer.Stop();
+		}
+
+		statusUpdateVisibilityTimer.Start();
+	}
 
 	public void SetMaxBullets(int amount)
 	{
@@ -119,7 +139,12 @@ public partial class Hud : CanvasLayer
 			LevelUpEnemies();
 	}
 
-	private void LevelUpEnemies()
+	private void OnStatusUpdateVisibilityTimerTimeout()
+	{
+		_statusUpdate.Visible = false;
+	}
+
+    private void LevelUpEnemies()
 	{
 		Enemy.Level++;
 		GetTree().CallGroup("Enemy", "LevelUp");

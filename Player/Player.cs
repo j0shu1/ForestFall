@@ -42,9 +42,9 @@ public partial class Player : CharacterBody2D
         else
             _inventory.Add(itemType, 1);
 
-        GD.Print($"Player now has {_inventory[itemType]} {itemType}");
         // Display the collected item on the HUD.
         Main.Hud.DisplayCollectedItem(itemType);
+        Main.Hud.PushCollectedItemStatus($"Player collected [b]{GetItemCount(itemType)}x[/b] [color=#aaffaa][i]{Item.GetName(itemType)}[/i][/color].");
     }
 
     public int GetItemCount(Item.ItemType request)
@@ -84,7 +84,7 @@ public partial class Player : CharacterBody2D
 
     public void LevelUp()
     {
-        // TODO: Produce level up particles.
         HealthComponent.LevelUp();
+        GetNode<CpuParticles2D>("LevelUpParticles").Emitting = true;
     }
 }

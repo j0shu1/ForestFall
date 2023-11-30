@@ -103,12 +103,19 @@ public partial class Item : Sprite2D
         if (body is Player player)
         {
 			player.AddItem(Type);
-			// TODO: Create pickup particles at this location.
-			QueueFree();
+            Visible = false;
+            GetNode<CollisionShape2D>("CollectionArea/CollisionShape2D").Disabled = true;
+            GetNode<AudioStreamPlayer2D>("PickupSound").Play();
+			GetNode<Timer>("DespawnTimer").Start();
         }
 	}
 
-    void OnStartParticlesTimeout()
+    private void OnDespawnTimerTimeout()
+    {
+        QueueFree();
+    }
+
+    private void OnStartParticlesTimeout()
     {
         GetNode<CpuParticles2D>("CPUParticles2D").Emitting = true;
     }

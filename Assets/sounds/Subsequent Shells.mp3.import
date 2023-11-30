@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://c1u2klh3srykb"
+path="res://.godot/imported/Subsequent Shells.mp3-337e20ad0c5e478b6364f0e1266cd574.mp3str"
+
+[deps]
+
+source_file="res://Assets/sounds/Subsequent Shells.mp3"
+dest_files=["res://.godot/imported/Subsequent Shells.mp3-337e20ad0c5e478b6364f0e1266cd574.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

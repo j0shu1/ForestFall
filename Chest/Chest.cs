@@ -59,7 +59,7 @@ public partial class Chest : StaticBody2D
 		if (!_debug)
 			_opened = true;
 		// TODO: Play animation of chest opening.
-		// TODO: Remove the HUD displaying instructions.
+		GetNode<AudioStreamPlayer2D>("PurchaseSound").Play();
 		SetPromptVisibility(false);
 
 		// Spawn a random item.

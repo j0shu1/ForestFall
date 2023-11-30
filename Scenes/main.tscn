@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://d3dvsomlvyar3"]
+[gd_scene load_steps=9 format=3 uid="uid://d3dvsomlvyar3"]
 
 [ext_resource type="Script" path="res://Scripts/Main.cs" id="1_t4uv8"]
 [ext_resource type="Texture2D" uid="uid://d2cf6lfms50v2" path="res://Assets/tile map placeholder.png" id="2_0x6bo"]
 [ext_resource type="PackedScene" uid="uid://c5ige8qkltxjx" path="res://Chest/chest.tscn" id="4_ypn3v"]
+[ext_resource type="AudioStream" uid="uid://ublv0jwv5es4" path="res://Assets/sounds/2019-12-11_-_Retro_Platforming_-_David_Fesliyan.mp3" id="5_7110m"]
 [ext_resource type="PackedScene" uid="uid://5c3ymepd7hj4" path="res://Scenes/hud.tscn" id="5_viev7"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_jxjel"]
@@ -28,9 +29,8 @@ physics_layer_0/collision_layer = 5
 navigation_layer_0/layers = 1
 sources/1 = SubResource("TileSetAtlasSource_4l5rn")
 
-[node name="Main" type="Node" node_paths=PackedStringArray("_playerSpawnLocation")]
+[node name="Main" type="Node"]
 script = ExtResource("1_t4uv8")
-_playerSpawnLocation = NodePath("PlayerSpawnLocation")
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_gs4ch")
@@ -50,5 +50,10 @@ _debug = true
 [node name="SpawnTimer" type="Timer" parent="."]
 wait_time = 5.0
 autostart = true
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_7110m")
+volume_db = -6.179
+autoplay = true
 
 [connection signal="timeout" from="SpawnTimer" to="." method="OnSpawnTimerTimeout"]
