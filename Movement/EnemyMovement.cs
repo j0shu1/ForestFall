@@ -6,16 +6,35 @@ public class EnemyMovement : MovementComponent
     public override void Move(CharacterBody2D body, double delta)
     {
         Enemy enemy = body as Enemy;
-        var direction = enemy.ToLocal(enemy.NavigationAgent.GetNextPathPosition()).Normalized();
-        Vector2 velocity = new(0, 0);
 
-        if (!enemy.IsOnFloor())
-            velocity.Y = enemy.Velocity.Y + _gravity * (float)delta;
-        else if (direction.Y < -0.5 && !enemy.Attacking)
-            velocity.Y = _jumpVelocity;
-        
-        velocity.X = direction.X * Speed;
-        enemy.Velocity = velocity;
-        enemy.MoveAndSlide();
+        if (!enemy.Attacking)
+        {
+            var direction = enemy.ToLocal(enemy.NavigationAgent.GetNextPathPosition()).Normalized();
+            Vector2 velocity = new(0, 0);
+
+            if (!enemy.IsOnFloor())
+                velocity.Y = enemy.Velocity.Y + _gravity * (float)delta;
+            else if (direction.Y < -0.5 && !enemy.Attacking)
+                velocity.Y = _jumpVelocity;
+
+            enemy.FacingRight = direction.X > 0;
+
+            velocity.X = direction.X * Speed;
+            enemy.Velocity = velocity;
+            enemy.MoveAndSlide();
+        }
+
+        HandleEnemyAnimation(enemy);
+    }
+
+    private void HandleEnemyAnimation(Enemy enemy)
+    {
+        var enemySprite = enemy.GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+        enemySprite.FlipH = !enemy.FacingRight;
+
+        if (enemy.Attacking)
+            enemySprite.Play("Attack");
+        else if (enemy.Velocity.Abs().X > 0.1)
+            enemySprite.Play("Run");
     }
 }

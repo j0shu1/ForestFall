@@ -1,5 +1,4 @@
 using Godot;
-using System.Security.Cryptography.X509Certificates;
 
 public partial class Enemy : CharacterBody2D
 {
@@ -20,6 +19,9 @@ public partial class Enemy : CharacterBody2D
 	public MovementComponent MovementComponent;
 
 	public bool Attacking;
+	public bool Dead = false;
+	public bool FacingRight = true;
+
 	private Player _playerTarget;
 	private int _maxHealth;
 
@@ -41,16 +43,24 @@ public partial class Enemy : CharacterBody2D
 
 	public void Die()
 	{
-		// TODO: Play death animation.
-		// Disable hitbox and movement.
-		GetNode<CollisionShape2D>("CollisionShape2D").Disabled = true;
+		// Inform MovementComponent that it is no longer able to move.
+		Dead = true;
+		var enemySprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+
+        enemySprite.Play("Die");
+        enemySprite.AnimationLooped += () =>
+        {
+            QueueFree();
+        };
+
+        // Disable hitbox and movement.
+        GetNode<CollisionShape2D>("CollisionShape2D").Disabled = true;
 		MovementComponent = new NoMovement();
 
+		// Give the player money and experience.
         int exp = 13;
 		Main.Hud.AddExp(exp);
 		GetTree().CallGroup("Player", "AddMoney", GD.RandRange(5, 10));
-		
-        QueueFree();
     }
 
 	public void LevelUp()
@@ -62,53 +72,42 @@ public partial class Enemy : CharacterBody2D
 
     private void OnAttackAreaBodyEntered(Node2D body)
 	{
+		if (Dead) return;
 		if (body is Player player)
 		{
 			_playerTarget = player;
 			_attackTimer.Start();
 			Attacking = true;
-			_attackCooldownTimer.Start();
-			// TODO: enable the attack hitbox and visibility, tween the rotation from the top to bottom.
-			
+			_attackCooldownTimer.Start();			
 
 			AttackToward(player.GlobalPosition);
-
-			//Tween tween = CreateTween();
-			//_attacking = true;
-			//attackHitBox.Disabled = false;
-			//tween.TweenProperty(attackRotation, "rotation", 90, 1);
-			//_attacking = false;
-			//attackHitBox.Disabled = true;
-
-			// After the tween is completed, disable the hitbox and visibility.
 		}
 	}
 
 	private async void AttackToward(Vector2 targetPosition)
 	{
+		GetNode<AnimatedSprite2D>("AnimatedSprite2D").Play("Attack");
+
 		Node2D attackRotation = GetNode<Node2D>("AttackRotation");
 		CollisionShape2D attackHitBox = GetNode<CollisionShape2D>("AttackRotation/AttackingArea/AttackHitBox");
-		ColorRect colorRect = GetNode<ColorRect>("AttackRotation/AttackingArea/ColorRect");
+		//ColorRect colorRect = GetNode<ColorRect>("AttackRotation/AttackingArea/ColorRect");
 		bool isLeft = targetPosition >= GlobalPosition;
 
 		Tween tween = CreateTween().SetParallel(false);
 		double attackTime = 0.25;
 
 		Attacking = true;
-		//attackHitBox.SetDeferred(CollisionShape2D.PropertyName.Disabled, false);
 		tween.TweenProperty(attackHitBox, "disabled", false, 0);
-		tween.TweenProperty(colorRect, "visible", true, 0);
+		//tween.TweenProperty(colorRect, "visible", true, 0);
 		tween.TweenProperty(attackRotation, "rotation_degrees", isLeft ? 90 : -270, attackTime);
 		tween.TweenProperty(attackHitBox, "disabled", true, 0);
-		//attackHitBox.SetDeferred(CollisionShape2D.PropertyName.Disabled, true);
-		tween.TweenProperty(colorRect, "visible", false, 0);
+		//tween.TweenProperty(colorRect, "visible", false, 0);
         attackRotation.RotationDegrees = -90;
 
 		GetNode<AudioStreamPlayer2D>("AttackSound").Play();
 
         await ToSignal(GetTree().CreateTimer(attackTime * 3), SceneTreeTimer.SignalName.Timeout);
 		Attacking = false;
-
 	}
 
 	private void OnAttackingAreaBodyEntered(Node2D body)

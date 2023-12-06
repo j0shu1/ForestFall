@@ -69,8 +69,6 @@ public class PlayerMovement : MovementComponent
             }
         }
 
-
-
         playerSprite.FlipH = !player.FacingRight;
     }
 }
