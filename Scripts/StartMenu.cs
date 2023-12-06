@@ -3,7 +3,7 @@ using Godot;
 public partial class StartMenu : CanvasLayer
 {
 	[Export]
-	private PackedScene MainScene;
+	private PackedScene _mainScene;
 
     public override void _UnhandledInput(InputEvent @event)
     {
@@ -14,6 +14,6 @@ public partial class StartMenu : CanvasLayer
     }
     private void OnStartButtonPressed()
 	{
-		GetTree().ChangeSceneToPacked(MainScene);
+		GetTree().ChangeSceneToPacked(_mainScene);
 	}
 }

@@ -104,7 +104,8 @@ public partial class Item : Sprite2D
         {
 			player.AddItem(Type);
             Visible = false;
-            GetNode<CollisionShape2D>("CollectionArea/CollisionShape2D").Disabled = true;
+            GetNode<CollisionShape2D>("CollectionArea/CollisionShape2D").SetDeferred(CollisionShape2D.PropertyName.Disabled, true);
+            //GetNode<CollisionShape2D>("CollectionArea/CollisionShape2D").Disabled = true;
             GetNode<AudioStreamPlayer2D>("PickupSound").Play();
 			GetNode<Timer>("DespawnTimer").Start();
         }

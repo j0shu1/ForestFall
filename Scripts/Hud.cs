@@ -48,6 +48,7 @@ public partial class Hud : CanvasLayer
 	[Export]
 	private PanelContainer _statusUpdate;
 
+	public int TimeElapsed = 0;
 	private Queue _itemCollectionQueue = new();
 
 	public void PushCollectedItemStatus(string message)
@@ -81,6 +82,7 @@ public partial class Hud : CanvasLayer
 	public void AddExp(int amount)
 	{
 		_expBar.Value += amount;
+		Player.ExperienceGained += amount;
 
 		while (_expBar.Value > _expBar.MaxValue)
 		{
@@ -134,6 +136,7 @@ public partial class Hud : CanvasLayer
 	private void OnEnemyLevelTimerTimeout()
 	{
 		_enemyLevelBar.Value++;
+		TimeElapsed++;
 
 		if (_enemyLevelBar.Value > _enemyLevelBar.MaxValue)
 			LevelUpEnemies();
@@ -150,6 +153,12 @@ public partial class Hud : CanvasLayer
 		GetTree().CallGroup("Enemy", "LevelUp");
 		_enemyLevelLabel.Text = $"Enemy Level: {Enemy.Level}";
 		_enemyLevelBar.Value = 0;
+
+		var spawnTimer = GetParent().GetNode<Timer>("SpawnTimer");
+		if (spawnTimer.WaitTime > 1.5)
+		{
+			spawnTimer.WaitTime -= 0.25;
+		}
 	}
 
 	private void OnHealthBarValueChanged(float value)

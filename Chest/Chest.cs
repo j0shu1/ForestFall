@@ -58,25 +58,36 @@ public partial class Chest : StaticBody2D
 	{
 		if (!_debug)
 			_opened = true;
-		// TODO: Play animation of chest opening.
 		GetNode<AudioStreamPlayer2D>("PurchaseSound").Play();
 		SetPromptVisibility(false);
 
-		// Spawn a random item.
-		GetParent().AddChild(Item.CreateRandomItem(location: GlobalPosition));
+		// Play animation of chest opening.
+		var sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		sprite.Play("Open");
+		sprite.AnimationLooped += () => {
+			// Stop looping the animation
+			sprite.Play("Opened");
+			sprite.Stop();
+
+			// Set the phyical shape to match the new shape of the chest.
+			var collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
+			collisionShape.Position = new Vector2(0, 21);
+			collisionShape.Scale = new Vector2(1, 0.5f);
+			//collisionShape.OneWayCollision = true;
+
+			// Spawn a random item.
+			GetParent().AddChild(Item.CreateRandomItem(location: GlobalPosition));
+		};
 	}
 
 	private void SetPromptVisibility(bool visible)
 	{
         _panelContainer.Visible = visible;
 
-		if (visible)
-		{
-            _prompt.Text = Input.GetConnectedJoypads().Count > 0 ? $"Press X to interact (Cost: {_cost})" : $"Press E to interact (Cost: {_cost})";
-        }
-		else
-		{
-			_prompt.Text = "";
-		}
+		_prompt.Text = visible ? 
+			Input.GetConnectedJoypads().Count > 0 ? 
+				$"Press X to interact (Cost: {_cost})" :
+				$"Press E to interact (Cost: {_cost})"
+			: "";
 	}
 }

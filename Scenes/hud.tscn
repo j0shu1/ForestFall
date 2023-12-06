@@ -229,6 +229,7 @@ custom_minimum_size = Vector2(284, 0)
 layout_mode = 2
 mouse_filter = 2
 bbcode_enabled = true
+scroll_active = false
 scroll_following = true
 
 [connection signal="changed" from="HealthBar" to="." method="OnHealthBarChanged"]

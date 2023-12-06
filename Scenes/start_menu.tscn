@@ -5,7 +5,7 @@
 
 [node name="StartMenu" type="CanvasLayer"]
 script = ExtResource("1_ceikx")
-MainScene = ExtResource("2_swtct")
+_mainScene = ExtResource("2_swtct")
 
 [node name="StartButton" type="Button" parent="."]
 anchors_preset = 8

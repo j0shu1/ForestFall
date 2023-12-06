@@ -11,7 +11,9 @@ public class PlayerMovement : MovementComponent
 
         // Add the gravity.
         if (!isOnFloor)
+        {
             velChange.Y += _gravity * (float)delta;
+        }
 
         // Handle Jump.
         if (isOnFloor &&
@@ -28,6 +30,11 @@ public class PlayerMovement : MovementComponent
         direction = direction.Normalized();
         if (direction != Vector2.Zero)
         {
+            if (direction.X > 0.5f)
+                direction.X = 1;
+            else if (direction.X < -0.5f)
+                direction.X = -1;
+
             velChange.X = direction.X * Speed * (1 + 0.10f * player.GetItemCount(Item.ItemType.SpeedBoost));
             player.FacingRight = velChange.X > 0;
         }
@@ -37,6 +44,33 @@ public class PlayerMovement : MovementComponent
         }
 
         player.Velocity = velChange;
+        HandlePlayerAnimation(player, isOnFloor);
         player.MoveAndSlide();
+    }
+
+    private void HandlePlayerAnimation(Player player, bool isOnFloor)
+    {
+        var playerSprite = player.GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+
+        if (!isOnFloor)
+        {
+            playerSprite.Play("Fall");
+        }
+        else
+        {
+            switch (player.Velocity.Abs().X)
+            {
+                case > 0.5f:
+                    playerSprite.Play("Run");
+                    break;
+                default:
+                    playerSprite.Play("Idle");
+                    break;
+            }
+        }
+
+
+
+        playerSprite.FlipH = !player.FacingRight;
     }
 }

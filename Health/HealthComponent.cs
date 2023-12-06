@@ -36,6 +36,16 @@ public partial class HealthComponent : Node
         _health += healthIncrease;
         
         UpdateHealthBar();
+
+        if (_parent is Player player)
+        {
+            // Make the character flash blue when they level up.
+            Tween tween = CreateTween();
+            var sprite = _parent.GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+
+            tween.TweenProperty(sprite, "modulate", Color.Color8(133, 166, 219), 0.05);
+            tween.TweenProperty(sprite, "modulate", Color.Color8(255, 255, 255), 0.05);
+        }
     }
 
     public bool IsDead()
@@ -114,6 +124,10 @@ public partial class HealthComponent : Node
     private void OnRegenTimerTimeout()
     {
         _health += _regenAmount;
+        if (_parent is Player player)
+        {
+            player.AmountHealed += _regenAmount;
+        }
 
         if (_health >= _maxHealth)
         {

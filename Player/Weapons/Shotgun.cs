@@ -11,7 +11,7 @@ public partial class Shotgun : Gun
 
     private bool _canKick = true;
     private const int BULLETS_PER_SHOT = 6;
-    private const float ATTACK_COOLDOWN_BASE = 1.0f;
+    private const float ATTACK_COOLDOWN_BASE = 0.75f;
     public override void _Ready()
     {
         _player = GetParent<Player>();
@@ -20,7 +20,7 @@ public partial class Shotgun : Gun
         _attackCooldown = ATTACK_COOLDOWN_BASE;
         _reloadTime = 3.0f;
 
-        Main.Hud.SetMaxBullets(4);
+        Main.Hud.SetMaxBullets(_magazineCapacity);
     }
 
     public override void Shoot()

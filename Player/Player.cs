@@ -8,7 +8,13 @@ public partial class Player : CharacterBody2D
 	public MovementComponent MovementComponent;
     public WeaponComponent WeaponComponent;
     public bool FacingRight = true;
+    public int DamageTaken = 0;
+    public int AmountHealed = 0;
+    public static int ExperienceGained = 0;
+    public int GoldCollected = 0;
+    public int GoldSpent = 0;
     public static int Level = 1;
+    public bool Dead = false;
 
     private Dictionary<Item.ItemType, int> _inventory = new();
     private int _money;
@@ -20,6 +26,7 @@ public partial class Player : CharacterBody2D
 
     public override void _UnhandledInput(InputEvent @event)
     {
+        if (Dead) return;
         if (Input.IsActionJustPressed("attack"))
             WeaponComponent.Attack();
 
@@ -54,12 +61,14 @@ public partial class Player : CharacterBody2D
 
     public void Hurt(int damage)
     {
+        DamageTaken += damage;
         HealthComponent.Hurt(damage);
     }
 
     public void AddMoney(int amount)
     {
         _money += amount;
+        GoldCollected += amount;
         Main.Hud.UpdateMoney(_money);
     }
 
@@ -68,6 +77,7 @@ public partial class Player : CharacterBody2D
         if (price <= _money)
         {
             _money -= price;
+            GoldSpent += price;
             Main.Hud.UpdateMoney(_money);
             return true;
         }
@@ -77,9 +87,25 @@ public partial class Player : CharacterBody2D
 
     public void Die()
     {
-        // Player death animation.
-        // Change scene to game over.
+        if (Dead) return;
+        // Stop player animation.
+        GetNode<AnimatedSprite2D>("AnimatedSprite2D").Stop();
+
+        // Disable interaction.
+        Dead = true;
+        MovementComponent = new NoMovement();
+        //GetNode<CollisionShape2D>("CollisionShape2D").SetDeferred(CollisionShape2D.PropertyName.Disabled, true);
+
+        // Hide HUD
+        Main.Hud.Visible = false;
+
+        // Display game over.
+        PackedScene endScene = (PackedScene)ResourceLoader.Load("res://End Screen/end_screen.tscn");
+        EndScreen endScreen = endScene.Instantiate<EndScreen>();
+
         // Show statistics for the run.
+        endScreen.ShowEndScreen(player:this);
+        GetParent().AddChild(endScreen);
     }
 
     public void LevelUp()

@@ -19,8 +19,8 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_2r4lc"]
-radius = 60.075
+[sub_resource type="CircleShape2D" id="CircleShape2D_f87a8"]
+radius = 57.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p0nj7"]
 size = Vector2(200, 200)
@@ -53,12 +53,11 @@ scale = Vector2(0.95, 0.95)
 sprite_frames = SubResource("SpriteFrames_1s7iy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_2r4lc")
+shape = SubResource("CircleShape2D_f87a8")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 target_desired_distance = 200.0
 path_postprocessing = 1
-avoidance_enabled = true
 radius = 100.0
 
 [node name="GetNextPath" type="Timer" parent="."]
@@ -71,7 +70,7 @@ autostart = true
 shape = SubResource("RectangleShape2D_p0nj7")
 
 [node name="DespawnTimer" type="Timer" parent="."]
-wait_time = 5.0
+wait_time = 30.0
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 

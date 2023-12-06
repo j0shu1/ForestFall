@@ -1,4 +1,5 @@
 using Godot;
+using System.Security.Cryptography.X509Certificates;
 
 public partial class Enemy : CharacterBody2D
 {
@@ -13,7 +14,9 @@ public partial class Enemy : CharacterBody2D
 	[Export]
 	private Timer _attackCooldownTimer;
 
-	public static int Level = 1;
+	public static int TotalDamageTaken = 0;
+	public static int MaxDamageTaken = 0;
+    public static int Level = 1;
 	public MovementComponent MovementComponent;
 
 	public bool Attacking;
@@ -28,11 +31,17 @@ public partial class Enemy : CharacterBody2D
     public void Hurt(int amount)
 	{
 		HealthComponent.Hurt(amount);
+		TotalDamageTaken += amount;
+
+		if (amount > MaxDamageTaken)
+		{
+			MaxDamageTaken = amount;
+		}
 	}
 
 	public void Die()
 	{
-        // TODO: Play death animation.
+		// TODO: Play death animation.
 		// Disable hitbox and movement.
 		GetNode<CollisionShape2D>("CollisionShape2D").Disabled = true;
 		MovementComponent = new NoMovement();
@@ -86,10 +95,12 @@ public partial class Enemy : CharacterBody2D
 		double attackTime = 0.25;
 
 		Attacking = true;
+		//attackHitBox.SetDeferred(CollisionShape2D.PropertyName.Disabled, false);
 		tween.TweenProperty(attackHitBox, "disabled", false, 0);
 		tween.TweenProperty(colorRect, "visible", true, 0);
 		tween.TweenProperty(attackRotation, "rotation_degrees", isLeft ? 90 : -270, attackTime);
 		tween.TweenProperty(attackHitBox, "disabled", true, 0);
+		//attackHitBox.SetDeferred(CollisionShape2D.PropertyName.Disabled, true);
 		tween.TweenProperty(colorRect, "visible", false, 0);
         attackRotation.RotationDegrees = -90;
 

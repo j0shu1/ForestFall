@@ -14,11 +14,11 @@ config/name="Prototype"
 run/main_scene="res://Scenes/start_menu.tscn"
 config/features=PackedStringArray("4.1", "C#", "Forward Plus")
 boot_splash/show_image=false
-config/icon="res://icon.svg"
+config/icon="res://Assets/icon.png"
 
 [display]
 
-window/size/mode=4
+window/size/mode=3
 window/size/resizable=false
 window/stretch/mode="canvas_items"
 window/layer_3="TileMap"
