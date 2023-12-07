@@ -47,9 +47,9 @@ public partial class Main : Node
 
 	private void CreateRandomSongOrder()
 	{
-		List<string> songs = GetSongs();
-		Shuffle(songs);
-		_songOrder = songs;
+		_songOrder = GetSongs();
+		Shuffle(_songOrder);
+
 		var musicPlayer = GetNode<AudioStreamPlayer>("Music");
 		musicPlayer.Stream = (AudioStream)ResourceLoader.Load("res://Assets/sounds/Music/" + _songOrder[0]);
 		musicPlayer.Play();
@@ -64,12 +64,14 @@ public partial class Main : Node
 
 		dir.ListDirBegin();
 		string fileName = dir.GetNext();
+		//GD.Print(fileName);
 
 		while (fileName != "")
 		{
-			if (!fileName.EndsWith(".import"))
+			if (fileName.EndsWith(".import"))
 			{
-				results.Add(fileName);
+				// Just add all of the imports. The exported project can't see .mp3 *shrug*
+				results.Add(fileName.Substr(0, fileName.Length - 7));
 			}
 
 			fileName = dir.GetNext();
@@ -101,8 +103,9 @@ public partial class Main : Node
 
 	private AudioStream GetNextSong(AudioStreamPlayer musicPlayer)
 	{
-		// Remove "res://Assets/sounds/Music/" from the resource path.
-        var currSong = musicPlayer.Stream.ResourcePath[26..];
+		string resourcePath = musicPlayer.Stream.ResourcePath;
+		// Remove "res://Assets/sounds/Music/" from the front of the path. 
+        var currSong = resourcePath.Substring(26);
 		int nextIndex = _songOrder.IndexOf(currSong) + 1;
 
 		if (nextIndex >= _songOrder.Count || nextIndex == -1) // -1 handles the song not being found in the order.
@@ -111,8 +114,9 @@ public partial class Main : Node
 			nextIndex = 0;
 		}
 
-		var nextSong = (AudioStream)ResourceLoader.Load("res://Assets/sounds/Music/" + _songOrder[nextIndex]);
-		return nextSong;
+		string nextSongFullPath = "res://Assets/sounds/Music/" + _songOrder[nextIndex];
+		var nextSongStream = (AudioStream)ResourceLoader.Load(nextSongFullPath);
+		return nextSongStream;
 	}
 
     private static void AddPlayerCamera(Player player)

@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dd2wvtaq44rwn" path="res://Assets/sheet.png" id="3_q64ov"]
 [ext_resource type="Texture2D" uid="uid://ddprmhwwowpjg" path="res://Assets/space_tile.png" id="4_x2f13"]
 [ext_resource type="PackedScene" uid="uid://5c3ymepd7hj4" path="res://Scenes/hud.tscn" id="5_viev7"]
-[ext_resource type="AudioStream" uid="uid://rhcsxhjbxg5n" path="res://Assets/sounds/Music/2019-12-11_-_Retro_Platforming_-_David_Fesliyan.mp3" id="6_ng7vf"]
+[ext_resource type="AudioStream" uid="uid://dkw64t33b38jx" path="res://Assets/sounds/Music/Bozz - William Benckert.mp3" id="6_ilvi0"]
 [ext_resource type="Texture2D" uid="uid://cov7vvem62wj3" path="res://Assets/Background.png" id="7_tuy1d"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_4ddk4"]
@@ -388,7 +388,7 @@ wait_time = 5.0
 autostart = true
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("6_ng7vf")
+stream = ExtResource("6_ilvi0")
 volume_db = -6.0
 autoplay = true
 
