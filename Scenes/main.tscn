@@ -1,11 +1,12 @@
-[gd_scene load_steps=32 format=3 uid="uid://d3dvsomlvyar3"]
+[gd_scene load_steps=33 format=3 uid="uid://d3dvsomlvyar3"]
 
 [ext_resource type="Script" path="res://Scripts/Main.cs" id="1_t4uv8"]
 [ext_resource type="Texture2D" uid="uid://dmjmqbrrvkv4f" path="res://Assets/_Spritesheet.png" id="3_ikg1h"]
 [ext_resource type="Texture2D" uid="uid://dd2wvtaq44rwn" path="res://Assets/sheet.png" id="3_q64ov"]
 [ext_resource type="Texture2D" uid="uid://ddprmhwwowpjg" path="res://Assets/space_tile.png" id="4_x2f13"]
-[ext_resource type="AudioStream" uid="uid://ublv0jwv5es4" path="res://Assets/sounds/2019-12-11_-_Retro_Platforming_-_David_Fesliyan.mp3" id="5_7110m"]
 [ext_resource type="PackedScene" uid="uid://5c3ymepd7hj4" path="res://Scenes/hud.tscn" id="5_viev7"]
+[ext_resource type="AudioStream" uid="uid://rhcsxhjbxg5n" path="res://Assets/sounds/Music/2019-12-11_-_Retro_Platforming_-_David_Fesliyan.mp3" id="6_ng7vf"]
+[ext_resource type="Texture2D" uid="uid://cov7vvem62wj3" path="res://Assets/Background.png" id="7_tuy1d"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_4ddk4"]
 vertices = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
@@ -384,11 +385,21 @@ position = Vector2(1062, 517)
 
 [node name="SpawnTimer" type="Timer" parent="."]
 wait_time = 5.0
-autostart = true
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("5_7110m")
-volume_db = -6.179
+stream = ExtResource("6_ng7vf")
+volume_db = -6.0
 autoplay = true
 
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.25, 0.25)
+motion_mirroring = Vector2(3400, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+position = Vector2(1700, 200)
+texture = ExtResource("7_tuy1d")
+
 [connection signal="timeout" from="SpawnTimer" to="." method="OnSpawnTimerTimeout"]
+[connection signal="finished" from="Music" to="." method="OnMusicFinished"]

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://854es3kq4yv3"
+path="res://.godot/imported/Glitching Through the Sky.mp3-7112c28c894fe6926eb6e45dc2e3e3ab.mp3str"
+
+[deps]
+
+source_file="res://Assets/sounds/Music/Glitching Through the Sky.mp3"
+dest_files=["res://.godot/imported/Glitching Through the Sky.mp3-7112c28c894fe6926eb6e45dc2e3e3ab.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

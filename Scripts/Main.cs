@@ -1,4 +1,5 @@
 using Godot;
+using System.Collections.Generic;
 
 public partial class Main : Node
 {
@@ -14,10 +15,13 @@ public partial class Main : Node
 
 	private Player _player;
 	private RayCast2D _ray;
+	private List<string> _songOrder;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		CreateRandomSongOrder();
+
 		// Create a raycast for the purposes of spawning things on the ground.
 		Hud = GetNode<Hud>("HUD");
 		_ray = new RayCast2D();
@@ -40,6 +44,76 @@ public partial class Main : Node
         Chest.SetChestCost(37);
 		SpawnChests();
     }
+
+	private void CreateRandomSongOrder()
+	{
+		List<string> songs = GetSongs();
+		Shuffle(songs);
+		_songOrder = songs;
+		var musicPlayer = GetNode<AudioStreamPlayer>("Music");
+		musicPlayer.Stream = (AudioStream)ResourceLoader.Load("res://Assets/sounds/Music/" + _songOrder[0]);
+		musicPlayer.Play();
+	}
+
+	private List<string> GetSongs()
+	{
+		using var dir = DirAccess.Open("res://Assets/sounds/Music/");
+		var results = new List<string>();
+
+		if (dir is null) return results;
+
+		dir.ListDirBegin();
+		string fileName = dir.GetNext();
+
+		while (fileName != "")
+		{
+			if (!fileName.EndsWith(".import"))
+			{
+				results.Add(fileName);
+			}
+
+			fileName = dir.GetNext();
+		}
+
+		return results;
+	}
+
+	private void Shuffle(List<string> elements)
+	{
+		for (int i = 0; i <  elements.Count; i++)
+		{
+			var iTarget = GD.RandRange(0, elements.Count - 1);
+			(elements[i], elements[iTarget]) = (elements[iTarget], elements[i]);
+		}
+	}
+
+	private void OnMusicFinished()
+	{
+		PlayNextSong();
+	}
+
+    private void PlayNextSong()
+	{
+		AudioStreamPlayer musicPlayer = GetNode<AudioStreamPlayer>("Music");
+		musicPlayer.Stream = GetNextSong(musicPlayer);
+		musicPlayer.Play();
+	}
+
+	private AudioStream GetNextSong(AudioStreamPlayer musicPlayer)
+	{
+		// Remove "res://Assets/sounds/Music/" from the resource path.
+        var currSong = musicPlayer.Stream.ResourcePath[26..];
+		int nextIndex = _songOrder.IndexOf(currSong) + 1;
+
+		if (nextIndex >= _songOrder.Count || nextIndex == -1) // -1 handles the song not being found in the order.
+		{
+			Shuffle(_songOrder);
+			nextIndex = 0;
+		}
+
+		var nextSong = (AudioStream)ResourceLoader.Load("res://Assets/sounds/Music/" + _songOrder[nextIndex]);
+		return nextSong;
+	}
 
     private static void AddPlayerCamera(Player player)
 	{

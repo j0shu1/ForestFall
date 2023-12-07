@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://b5csfmjjt8cw7"
+path="res://.godot/imported/Nintendo Revolution.mp3-e4a9af13dacffab34a4822bfa837235d.mp3str"
+
+[deps]
+
+source_file="res://Assets/sounds/Music/Nintendo Revolution.mp3"
+dest_files=["res://.godot/imported/Nintendo Revolution.mp3-e4a9af13dacffab34a4822bfa837235d.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

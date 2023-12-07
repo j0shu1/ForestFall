@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dkw64t33b38jx"
+path="res://.godot/imported/Bozz - William Benckert.mp3-354728a921de85925f0b1c9cdad2248d.mp3str"
+
+[deps]
+
+source_file="res://Assets/sounds/Music/Bozz - William Benckert.mp3"
+dest_files=["res://.godot/imported/Bozz - William Benckert.mp3-354728a921de85925f0b1c9cdad2248d.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
