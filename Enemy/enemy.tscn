@@ -68,23 +68,23 @@ region = Rect2(384, 864, 96, 96)
 atlas = ExtResource("3_4nce3")
 region = Rect2(480, 864, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_cdpk4"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_2spaw"]
 atlas = ExtResource("3_4nce3")
 region = Rect2(0, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_kxm0c"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_5oii3"]
 atlas = ExtResource("3_4nce3")
 region = Rect2(96, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_uyq0h"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_vqicn"]
 atlas = ExtResource("3_4nce3")
 region = Rect2(192, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_qfrex"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_xplmf"]
 atlas = ExtResource("3_4nce3")
 region = Rect2(288, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_qm0bp"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_g8587"]
 atlas = ExtResource("3_4nce3")
 region = Rect2(384, 0, 96, 96)
 
@@ -150,7 +150,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_42rsk")
 }],
-"loop": true,
+"loop": false,
 "name": &"Attack",
 "speed": 10.0
 }, {
@@ -173,25 +173,25 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_q48ix")
 }],
-"loop": true,
+"loop": false,
 "name": &"Die",
 "speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_cdpk4")
+"texture": SubResource("AtlasTexture_2spaw")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_kxm0c")
+"texture": SubResource("AtlasTexture_5oii3")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_uyq0h")
+"texture": SubResource("AtlasTexture_vqicn")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_qfrex")
+"texture": SubResource("AtlasTexture_xplmf")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_qm0bp")
+"texture": SubResource("AtlasTexture_g8587")
 }],
 "loop": true,
 "name": &"Idle",
@@ -228,8 +228,8 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2adyk"]
-radius = 42.0
-height = 108.0
+radius = 41.0
+height = 114.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p0nj7"]
 size = Vector2(200, 200)
@@ -244,14 +244,11 @@ point_count = 2
 [sub_resource type="Gradient" id="Gradient_5m03x"]
 colors = PackedColorArray(0.431373, 0, 0, 1, 0, 0, 0, 0)
 
-[node name="Enemy" type="CharacterBody2D" node_paths=PackedStringArray("HealthComponent", "NavigationAgent", "_despawnTimer", "_attackTimer", "_attackCooldownTimer") groups=["Enemy"]]
+[node name="Enemy" type="CharacterBody2D" node_paths=PackedStringArray("HealthComponent") groups=["Enemy"]]
+collision_mask = 5
 wall_min_slide_angle = 0.0
 script = ExtResource("1_clrx7")
 HealthComponent = NodePath("HealthComponent")
-NavigationAgent = NodePath("NavigationAgent2D")
-_despawnTimer = NodePath("DespawnTimer")
-_attackTimer = NodePath("AttackTimer")
-_attackCooldownTimer = NodePath("AttackCooldown")
 
 [node name="HealthComponent" parent="." node_paths=PackedStringArray("HealthBar") instance=ExtResource("2_pvcm2")]
 HealthBar = NodePath("../HealthBar")
@@ -260,13 +257,12 @@ HealthBar = NodePath("../HealthBar")
 position = Vector2(0, 10)
 scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_1s7iy")
-animation = &"Die"
-autoplay = "Run"
-frame = 2
-frame_progress = 0.494825
+animation = &"Idle"
+autoplay = "Idle"
+frame_progress = 0.544875
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-10, -5)
+position = Vector2(-10, -1)
 shape = SubResource("CapsuleShape2D_2adyk")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
@@ -278,13 +274,8 @@ radius = 100.0
 wait_time = 0.2
 autostart = true
 
-[node name="AttackArea" type="Area2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
-shape = SubResource("RectangleShape2D_p0nj7")
-
 [node name="DespawnTimer" type="Timer" parent="."]
-wait_time = 30.0
+wait_time = 45.0
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 
@@ -297,22 +288,22 @@ texture_under = ExtResource("4_4b73e")
 texture_progress = ExtResource("5_orp52")
 tint_progress = Color(0.792157, 0, 0.113725, 1)
 
-[node name="AttackTimer" type="Timer" parent="."]
+[node name="AttackRange" type="Area2D" parent="."]
 
-[node name="AttackCooldown" type="Timer" parent="."]
-one_shot = true
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
+shape = SubResource("RectangleShape2D_p0nj7")
 
 [node name="AttackRotation" type="Node2D" parent="."]
 rotation = -1.5708
 
-[node name="AttackingArea" type="Area2D" parent="AttackRotation"]
+[node name="WeaponArea" type="Area2D" parent="AttackRotation"]
 position = Vector2(80, 0)
 
-[node name="AttackHitBox" type="CollisionShape2D" parent="AttackRotation/AttackingArea"]
+[node name="WeaponCollisionShape" type="CollisionShape2D" parent="AttackRotation/WeaponArea"]
 shape = SubResource("CircleShape2D_kjoeq")
 disabled = true
 
-[node name="ColorRect" type="ColorRect" parent="AttackRotation/AttackingArea"]
+[node name="ColorRect" type="ColorRect" parent="AttackRotation/WeaponArea"]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -346,12 +337,11 @@ color_ramp = SubResource("Gradient_5m03x")
 [node name="AttackSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("7_4ug61")
 
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="OnAnimatedSprite2dAnimationFinished"]
 [connection signal="timeout" from="GetNextPath" to="." method="OnGetNextPathTimeout"]
-[connection signal="body_entered" from="AttackArea" to="." method="OnAttackAreaBodyEntered"]
-[connection signal="body_exited" from="AttackArea" to="." method="OnAttackAreaBodyExited"]
 [connection signal="timeout" from="DespawnTimer" to="." method="OnDespawnTimerTimeout"]
 [connection signal="screen_entered" from="VisibleOnScreenNotifier2D" to="." method="OnVisibleOnScreenNotifier2dScreenEntered"]
 [connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="OnVisibleOnScreenNotifier2dScreenExited"]
-[connection signal="timeout" from="AttackTimer" to="." method="OnAttackTimerTimeout"]
-[connection signal="timeout" from="AttackCooldown" to="." method="OnAttackCooldownTimeout"]
-[connection signal="body_entered" from="AttackRotation/AttackingArea" to="." method="OnAttackingAreaBodyEntered"]
+[connection signal="body_entered" from="AttackRange" to="." method="OnAttackRangeBodyEntered"]
+[connection signal="body_exited" from="AttackRange" to="." method="OnAttackRangeBodyExited"]
+[connection signal="body_entered" from="AttackRotation/WeaponArea" to="." method="OnWeaponAreaBodyEntered"]

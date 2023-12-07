@@ -4,14 +4,6 @@ public partial class Enemy : CharacterBody2D
 {
 	[Export]
 	public HealthComponent HealthComponent;
-	[Export]
-	public NavigationAgent2D NavigationAgent;
-	[Export]
-	private Timer _despawnTimer;
-	[Export]
-	private Timer _attackTimer;
-	[Export]
-	private Timer _attackCooldownTimer;
 
 	public static int TotalDamageTaken = 0;
 	public static int MaxDamageTaken = 0;
@@ -19,7 +11,7 @@ public partial class Enemy : CharacterBody2D
 	public MovementComponent MovementComponent;
 
 	public bool Attacking;
-	public bool Dead = false;
+	public bool Dead;
 	public bool FacingRight = true;
 
 	private Player _playerTarget;
@@ -43,19 +35,20 @@ public partial class Enemy : CharacterBody2D
 
 	public void Die()
 	{
-		// Inform MovementComponent that it is no longer able to move.
+		// Avoid granting additional exp to the players.
+		if (Dead) return;
+
+		// Inform EnemyMovement that the enemy can no longer move.
 		Dead = true;
-		var enemySprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 
-        enemySprite.Play("Die");
-        enemySprite.AnimationLooped += () =>
-        {
-            QueueFree();
-        };
+        // Play death animation.
+        GetNode<AnimatedSprite2D>("AnimatedSprite2D").Play("Die");
 
-        // Disable hitbox and movement.
-        GetNode<CollisionShape2D>("CollisionShape2D").Disabled = true;
-		MovementComponent = new NoMovement();
+		// Remove health bar.
+		GetNode<TextureProgressBar>("HealthBar").Visible = false;
+
+		// Disable attack radius.
+		GetNode<CollisionShape2D>("AttackRange/CollisionShape2D").Disabled = true;
 
 		// Give the player money and experience.
         int exp = 13;
@@ -65,78 +58,97 @@ public partial class Enemy : CharacterBody2D
 
 	public void LevelUp()
 	{
-		// TODO: Produce level up particles.
+		if (Dead) return;
+
 		HealthComponent.LevelUp();
 		GetNode<CpuParticles2D>("LevelUpParticles").Emitting = true;
 	}
 
-    private void OnAttackAreaBodyEntered(Node2D body)
+	private void OnAttackRangeBodyEntered(Node2D body)
 	{
-		if (Dead) return;
 		if (body is Player player)
 		{
 			_playerTarget = player;
-			_attackTimer.Start();
-			Attacking = true;
-			_attackCooldownTimer.Start();			
 
-			AttackToward(player.GlobalPosition);
+			if (!Attacking)
+				AttackToward(player.GlobalPosition);
 		}
 	}
+    
+	private void OnAttackRangeBodyExited(Node2D body)
+    {
+        if (body == _playerTarget)
+        {
+            _playerTarget = null;
+        }
+    }
 
-	private async void AttackToward(Vector2 targetPosition)
+    private async void OnAnimatedSprite2dAnimationFinished()
 	{
-		GetNode<AnimatedSprite2D>("AnimatedSprite2D").Play("Attack");
+		// When the animation completes, if there is a _targetPlayer, attack them.
+		// Otherwise, indicate that attacking is over.
+		var sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+
+        switch (sprite.Animation)
+        {
+            case "Attack":
+                // Play idle animation for a moment.
+                sprite.Play("Idle");
+                await ToSignal(GetTree().CreateTimer(0.25), SceneTreeTimer.SignalName.Timeout);
+
+                if (_playerTarget is null)
+                {
+                    Attacking = false;
+                }
+                else
+                {
+                    AttackToward(_playerTarget.GlobalPosition);
+                }
+                break;
+            case "Die":
+				SetCollisionLayerValue(1, false);
+				SetCollisionMaskValue(1, false);
+
+                await ToSignal(GetTree().CreateTimer(5), SceneTreeTimer.SignalName.Timeout);
+
+				Tween tween = CreateTween();
+				tween.TweenProperty(sprite, "modulate", new Color(1, 1, 1, 0), 1);
+
+                await ToSignal(GetTree().CreateTimer(1), SceneTreeTimer.SignalName.Timeout);
+                QueueFree();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void AttackToward(Vector2 targetPosition)
+	{
+		var sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		sprite.Play("Attack");
 
 		Node2D attackRotation = GetNode<Node2D>("AttackRotation");
-		CollisionShape2D attackHitBox = GetNode<CollisionShape2D>("AttackRotation/AttackingArea/AttackHitBox");
-		//ColorRect colorRect = GetNode<ColorRect>("AttackRotation/AttackingArea/ColorRect");
-		bool isLeft = targetPosition >= GlobalPosition;
+		CollisionShape2D weaponCollisionShape = GetNode<CollisionShape2D>("AttackRotation/WeaponArea/WeaponCollisionShape");
+		FacingRight = targetPosition.X > GlobalPosition.X;
 
-		Tween tween = CreateTween().SetParallel(false);
+        Tween tween = CreateTween().SetParallel(false);
 		double attackTime = 0.25;
 
 		Attacking = true;
-		tween.TweenProperty(attackHitBox, "disabled", false, 0);
-		//tween.TweenProperty(colorRect, "visible", true, 0);
-		tween.TweenProperty(attackRotation, "rotation_degrees", isLeft ? 90 : -270, attackTime);
-		tween.TweenProperty(attackHitBox, "disabled", true, 0);
-		//tween.TweenProperty(colorRect, "visible", false, 0);
+		tween.TweenProperty(weaponCollisionShape, "disabled", false, 0);
+		tween.TweenProperty(attackRotation, "rotation_degrees", FacingRight ? 90 : -270, attackTime);
+		tween.TweenProperty(weaponCollisionShape, "disabled", true, 0);
         attackRotation.RotationDegrees = -90;
 
 		GetNode<AudioStreamPlayer2D>("AttackSound").Play();
-
-        await ToSignal(GetTree().CreateTimer(attackTime * 3), SceneTreeTimer.SignalName.Timeout);
-		Attacking = false;
 	}
 
-	private void OnAttackingAreaBodyEntered(Node2D body)
+	private void OnWeaponAreaBodyEntered(Node2D body)
 	{
 		if (body is Player player)
 		{
 			player.Hurt(3 + 3 * Level);
 		}
-	}
-
-
-    private void OnAttackAreaBodyExited(Node2D body)
-	{
-		if (body == _playerTarget)
-		{
-			_playerTarget = null;
-			_attackTimer.Stop();
-		}
-	}
-
-    private void OnAttackTimerTimeout()
-	{
-		// If the player is not null, hurt them.
-		//_playerTarget?.Hurt(3 + 3 * Level);
-	}
-
-	private void OnAttackCooldownTimeout()
-	{
-		Attacking = false;
 	}
 
 	private void OnGetNextPathTimeout()
@@ -145,12 +157,11 @@ public partial class Enemy : CharacterBody2D
         if (_playerTarget is null && !Attacking)
         {
 			TargetClosestPlayer();
-			//NavigationAgent.TargetPosition = Player.GlobalPosition;
         }
 		else
 		{
 			// If there is a player in our attack range, don't move.
-			NavigationAgent.TargetPosition = GlobalPosition;
+			GetNode<NavigationAgent2D>("NavigationAgent2D").TargetPosition = GlobalPosition;
 		}
 	}
 
@@ -163,7 +174,7 @@ public partial class Enemy : CharacterBody2D
 		if (players.Count == 1)
 		{
 			Player target = (Player)players[0];
-			NavigationAgent.TargetPosition = target.Position;
+			GetNode<NavigationAgent2D>("NavigationAgent2D").TargetPosition = target.Position;
 			return;
 		}
 
@@ -189,22 +200,21 @@ public partial class Enemy : CharacterBody2D
 		}
 
 		// Once the closest player has been determined, target them.
-		NavigationAgent.TargetPosition = targetPlayer.GlobalPosition;
+		GetNode<NavigationAgent2D>("NavigationAgent2D").TargetPosition = targetPlayer.GlobalPosition;
 	}
 
 	private void OnDespawnTimerTimeout()
 	{
-		// TODO: Disable collisions and movement, Play death animation.
 		QueueFree();
 	}
 
 	private void OnVisibleOnScreenNotifier2dScreenExited()
 	{
-		_despawnTimer.Start();
+		GetNode<Timer>("DespawnTimer").Start();
 	}
 
 	private void OnVisibleOnScreenNotifier2dScreenEntered()
 	{
-		_despawnTimer.Stop();
+        GetNode<Timer>("DespawnTimer").Stop();
 	}
 }

@@ -21,6 +21,7 @@ config/icon="res://Assets/icon.png"
 window/size/resizable=false
 window/stretch/mode="canvas_items"
 window/layer_3="TileMap"
+mouse_cursor/size/mode=0
 
 [dotnet]
 
@@ -75,6 +76,8 @@ reload={
 
 [layer_names]
 
+2d_physics/layer_1="Players"
+2d_physics/layer_2="Enemies"
 2d_physics/layer_3="TileMap"
 
 [rendering]

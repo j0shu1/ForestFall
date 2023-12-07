@@ -69,11 +69,7 @@ public partial class Chest : StaticBody2D
 			sprite.Play("Opened");
 			sprite.Stop();
 
-			// Set the phyical shape to match the new shape of the chest.
-			var collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
-			collisionShape.Position = new Vector2(0, 21);
-			collisionShape.Scale = new Vector2(1, 0.5f);
-			//collisionShape.OneWayCollision = true;
+			GetNode<CollisionShape2D>("CollisionShape2D").Disabled = true;
 
 			// Spawn a random item.
 			GetParent().AddChild(Item.CreateRandomItem(location: GlobalPosition));

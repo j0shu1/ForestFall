@@ -7,22 +7,28 @@ public class EnemyMovement : MovementComponent
     {
         Enemy enemy = body as Enemy;
 
-        if (!enemy.Attacking)
+        var direction = Vector2.Zero;
+
+        if (!enemy.Attacking && !enemy.Dead)
         {
-            var direction = enemy.ToLocal(enemy.NavigationAgent.GetNextPathPosition()).Normalized();
-            Vector2 velocity = new(0, 0);
+            direction = enemy.ToLocal(enemy.GetNode<NavigationAgent2D>("NavigationAgent2D").GetNextPathPosition()).Normalized();
 
-            if (!enemy.IsOnFloor())
-                velocity.Y = enemy.Velocity.Y + _gravity * (float)delta;
-            else if (direction.Y < -0.5 && !enemy.Attacking)
-                velocity.Y = _jumpVelocity;
-
-            enemy.FacingRight = direction.X > 0;
-
-            velocity.X = direction.X * Speed;
-            enemy.Velocity = velocity;
-            enemy.MoveAndSlide();
+            // Update the direction the enemy is facing.
+            if (direction.X > 0.25)
+                enemy.FacingRight = true;
+            if (direction.X < -0.25)
+                enemy.FacingRight = false;
         }
+
+        Vector2 velocity = new(direction.X * Speed, 0);
+
+        if (!enemy.IsOnFloor())
+            velocity.Y = enemy.Velocity.Y + _gravity * (float)delta;
+        else if (direction.Y < -0.5 && !enemy.Attacking)
+            velocity.Y = _jumpVelocity;
+
+        enemy.Velocity = velocity;
+        enemy.MoveAndSlide();
 
         HandleEnemyAnimation(enemy);
     }
@@ -32,9 +38,7 @@ public class EnemyMovement : MovementComponent
         var enemySprite = enemy.GetNode<AnimatedSprite2D>("AnimatedSprite2D");
         enemySprite.FlipH = !enemy.FacingRight;
 
-        if (enemy.Attacking)
-            enemySprite.Play("Attack");
-        else if (enemy.Velocity.Abs().X > 0.1)
+        if (enemy.Velocity.Abs().X > 0.1 && !enemy.Attacking && !enemy.Dead)
             enemySprite.Play("Run");
     }
 }
