@@ -89,9 +89,11 @@ public partial class Main : Node
 		}
 	}
 
-	private void OnMusicFinished()
+	private async void OnMusicFinished()
 	{
-		PlayNextSong();
+		// Wait for 5 seconds to begin the next song.
+        await ToSignal(GetTree().CreateTimer(5), SceneTreeTimer.SignalName.Timeout);
+        PlayNextSong();
 	}
 
     private void PlayNextSong()
@@ -210,6 +212,15 @@ public partial class Main : Node
 
 	private void OnHintVisibilityNotifierScreenExited()
 	{
-		GetNode<Label>("PlayerSpawnLocation/Hint").QueueFree();
+		GetNode<RichTextLabel>("PlayerSpawnLocation/Hint").QueueFree();
+	}
+
+	private void OnKillBoxBodyEntered(Node2D body)
+	{
+		GD.Print("Something entered kill box.");
+		if (body is Player player)
+		{
+			player.Die();
+		}
 	}
 }

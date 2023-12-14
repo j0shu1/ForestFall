@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://d3dvsomlvyar3"]
+[gd_scene load_steps=34 format=3 uid="uid://d3dvsomlvyar3"]
 
 [ext_resource type="Script" path="res://Scripts/Main.cs" id="1_t4uv8"]
 [ext_resource type="Texture2D" uid="uid://dmjmqbrrvkv4f" path="res://Assets/_Spritesheet.png" id="3_ikg1h"]
@@ -334,6 +334,7 @@ texture_region_size = Vector2i(256, 256)
 1:1/0 = 0
 1:1/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 1:1/0/physics_layer_0/angular_velocity = 0.0
+1:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
 2:0/0 = 0
 2:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 2:0/0/physics_layer_0/angular_velocity = 0.0
@@ -388,6 +389,9 @@ sources/0 = SubResource("TileSetAtlasSource_17t7g")
 sources/1 = SubResource("TileSetAtlasSource_bnyd2")
 sources/3 = SubResource("TileSetAtlasSource_upp4m")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6mpkh"]
+size = Vector2(60000, 20)
+
 [node name="Main" type="Node"]
 script = ExtResource("1_t4uv8")
 
@@ -400,20 +404,33 @@ layer_0/tile_data = PackedInt32Array(2097187, 786432, 5, 2097186, 786432, 5, 262
 [node name="PlayerSpawnLocation" type="Marker2D" parent="."]
 position = Vector2(1062, 517)
 
-[node name="Hint" type="Label" parent="PlayerSpawnLocation"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -77.0
-offset_top = 218.5
-offset_right = 77.0
-offset_bottom = 241.5
+[node name="Hint" type="RichTextLabel" parent="PlayerSpawnLocation"]
+clip_contents = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -136.0
+offset_top = 230.0
+offset_right = 115.0
+offset_bottom = 437.0
 grow_horizontal = 2
-grow_vertical = 2
-text = "(Try shooting down)
+scale = Vector2(1, 1.01539)
+mouse_filter = 2
+bbcode_enabled = true
+text = "               Keyboard / Controller
+Attack:   Left click / Right Trigger
+Move:          WASD / Left Stick
+Aim:           Mouse / Right Stick
+Reload:               R / X
+Jump:          Space / A
+
+               [color=orange](Try shooting down)[/color]
+
 "
+fit_content = true
 
 [node name="HintVisibilityNotifier" type="VisibleOnScreenNotifier2D" parent="PlayerSpawnLocation/Hint"]
+scale = Vector2(1.66667, 7.44544)
 rect = Rect2(0, 0, 150, 25)
 
 [node name="Chests" type="Node" parent="."]
@@ -439,6 +456,13 @@ motion_mirroring = Vector2(3400, 0)
 position = Vector2(1700, 200)
 texture = ExtResource("7_tuy1d")
 
+[node name="KillBox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillBox"]
+position = Vector2(0, 2000)
+shape = SubResource("RectangleShape2D_6mpkh")
+
 [connection signal="screen_exited" from="PlayerSpawnLocation/Hint/HintVisibilityNotifier" to="." method="OnHintVisibilityNotifierScreenExited"]
 [connection signal="timeout" from="SpawnTimer" to="." method="OnSpawnTimerTimeout"]
 [connection signal="finished" from="Music" to="." method="OnMusicFinished"]
+[connection signal="body_entered" from="KillBox" to="." method="OnKillBoxBodyEntered"]
