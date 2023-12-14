@@ -133,7 +133,7 @@ public partial class Main : Node
 	private async void SpawnChests()
 	{
 		// Wait for the TileMap to exist.
-        await ToSignal(GetTree().CreateTimer(0.00001), SceneTreeTimer.SignalName.Timeout);
+        await ToSignal(GetTree().CreateTimer(0.1), SceneTreeTimer.SignalName.Timeout);
 
 		// Calculate equal distances to spawn each chest from one another.
 		int distanceIncrement = (SCENE_X_MAX - SCENE_X_MIN) / CHESTS_TO_SPAWN;
@@ -165,6 +165,7 @@ public partial class Main : Node
 		}
 		else
 		{
+			GD.Print("Was not able to obtain a collision point.");
 			// If we hit a chest or something other than the TileMap, try again.
 			SpawnChest(min, max, attempts + 1);
 		}
@@ -205,5 +206,10 @@ public partial class Main : Node
                 location: _ray.GetCollisionPoint());
 			AddChild(enemy);
 		}
+	}
+
+	private void OnHintVisibilityNotifierScreenExited()
+	{
+		GetNode<Label>("PlayerSpawnLocation/Hint").QueueFree();
 	}
 }
